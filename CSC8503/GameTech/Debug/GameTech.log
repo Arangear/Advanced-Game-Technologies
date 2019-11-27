@@ -1,0 +1,19 @@
+﻿  GameTechRenderer.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um\winsock2.h(17,1): warning C4005: '_WINSOCKAPI_': macro redefinition
+  Main.cpp
+C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\CSC8503\GameTech\GameTechRenderer.cpp : message : see previous definition of '_WINSOCKAPI_'
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um\winsock2.h(17,1): warning C4005: '_WINSOCKAPI_': macro redefinition
+  NetworkedGame.cpp
+C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\CSC8503\GameTech\Main.cpp : message : see previous definition of '_WINSOCKAPI_'
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um\winsock2.h(17,1): warning C4005: '_WINSOCKAPI_': macro redefinition
+  NetworkPlayer.cpp
+C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\CSC8503\GameTech\NetworkedGame.cpp : message : see previous definition of '_WINSOCKAPI_'
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um\winsock2.h(17,1): warning C4005: '_WINSOCKAPI_': macro redefinition
+  TutorialGame.cpp
+C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\CSC8503\GameTech\NetworkPlayer.cpp : message : see previous definition of '_WINSOCKAPI_'
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um\winsock2.h(17,1): warning C4005: '_WINSOCKAPI_': macro redefinition
+C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\CSC8503\GameTech\TutorialGame.cpp : message : see previous definition of '_WINSOCKAPI_'
+C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\CSC8503\GameTech\TutorialGame.cpp(421,60): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
+C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\CSC8503\GameTech\TutorialGame.cpp(457,60): warning C4305: 'argument': truncation from 'double' to 'float'
+  GameTech.vcxproj -> C:\Users\Admin\Downloads\CSC8503 2019 Download(1)\Win32\Debug\GameTech.exe

@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+*.opendb
+*.db
+*.suo
+/.vs
