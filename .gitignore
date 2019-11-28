@@ -34,3 +34,10 @@
 *.db
 *.suo
 /.vs
+
+*.idb
+*.tlog
+*.lastbuildstate
+*.log
+*.pdb
+*.ilk
