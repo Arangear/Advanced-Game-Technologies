@@ -53,6 +53,16 @@ namespace NCL {
 				std::vector<Constraint*>::const_iterator& first,
 				std::vector<Constraint*>::const_iterator& last) const;
 
+			const unsigned int GetInteractibleLayer()
+			{
+				return interactibleLayer;
+			}
+
+			void SetInteractibleLayer(const unsigned int layer)
+			{
+				interactibleLayer = layer;
+			}
+
 		protected:
 			void UpdateTransforms();
 			void UpdateQuadTree();
@@ -67,6 +77,8 @@ namespace NCL {
 
 			bool shuffleConstraints;
 			bool shuffleObjects;
+
+			unsigned int interactibleLayer;
 		};
 	}
 }

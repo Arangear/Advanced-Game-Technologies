@@ -228,6 +228,11 @@ letting you move the camera around.
 
 */
 bool TutorialGame::SelectObject() {
+	if (selectionObject && targetObject)
+	{
+		Debug::DrawLine(selectionObject->GetTransform().GetWorldPosition(), targetObject->GetTransform().GetWorldPosition(), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+	}
+
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::Q)) {
 		inSelectionMode = !inSelectionMode;
 		if (inSelectionMode) {
@@ -246,6 +251,12 @@ bool TutorialGame::SelectObject() {
 			if (selectionObject) {	//set colour to deselected;
 				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 				selectionObject = nullptr;
+
+				if (targetObject)
+				{
+					targetObject->GetRenderObject()->SetColour(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					targetObject = nullptr;
+				}
 			}
 
 			Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
@@ -254,6 +265,14 @@ bool TutorialGame::SelectObject() {
 			if (world->Raycast(ray, closestCollision, true)) {
 				selectionObject = (GameObject*)closestCollision.node;
 				selectionObject->GetRenderObject()->SetColour(Vector4(0, 1, 0, 1));
+
+				Ray front(selectionObject->GetTransform().GetWorldPosition(), Vector3(0.0f, 0.0f, -1.0f));
+				if (world->Raycast(front, closestCollision, true))
+				{
+					targetObject = (GameObject*)closestCollision.node;
+					targetObject->GetRenderObject()->SetColour(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+				}
+
 				return true;
 			}
 			else {
@@ -359,6 +378,8 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
 	sphere->GetPhysicsObject()->InitSphereInertia();
+
+	sphere->SetLayer(1);
 
 	world->AddGameObject(sphere);
 

@@ -15,6 +15,8 @@ GameWorld::GameWorld()	{
 
 	shuffleConstraints	= false;
 	shuffleObjects		= false;
+
+	interactibleLayer = 0;
 }
 
 GameWorld::~GameWorld()	{
@@ -90,6 +92,10 @@ bool GameWorld::Raycast(Ray& r, RayCollision& closestCollision, bool closestObje
 	RayCollision collision;
 
 	for (auto& i : gameObjects) {
+		if (!i->GetLayer() == interactibleLayer)
+		{
+			continue;
+		}
 		if (!i->GetBoundingVolume()) { //objects might not be collideable etc...
 			continue;
 		}
