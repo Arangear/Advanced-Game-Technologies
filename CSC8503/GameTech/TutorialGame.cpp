@@ -326,6 +326,33 @@ void TutorialGame::MoveSelectedObject()
 			}
 		}
 	}
+	if(inSelectionMode)
+	{ 
+		if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::A))
+		{
+			selectionObject->GetPhysicsObject()->AddForce(Vector3(-1, 0, 0) * forceMagnitude);
+		}
+		if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::W))
+		{
+			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, -1) * forceMagnitude);
+		}
+		if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::S))
+		{
+			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 0, 1) * forceMagnitude);
+		}
+		if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::D))
+		{
+			selectionObject->GetPhysicsObject()->AddForce(Vector3(1, 0, 0) * forceMagnitude);
+		}
+		if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::SPACE))
+		{
+			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, 1, 0) * forceMagnitude);
+		}
+		if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::SHIFT))
+		{
+			selectionObject->GetPhysicsObject()->AddForce(Vector3(0, -1, 0) * forceMagnitude);
+		}
+	}
 
 }
 

@@ -243,7 +243,7 @@ void PhysicsSystem::IntegrateVelocity(float dt)
 	std::vector<GameObject*>::const_iterator first;
 	std::vector<GameObject*>::const_iterator last;
 	gameWorld.GetObjectIterators(first, last);
-	float dampingFactor = 1.0f - 0.95f;
+	float dampingFactor = 1.0f - globalDamping;
 	float frameDamping = powf(dampingFactor, dt);
 	
 	for (auto i = first; i != last; ++i)
