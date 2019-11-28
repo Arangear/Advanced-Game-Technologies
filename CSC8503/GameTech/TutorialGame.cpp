@@ -247,7 +247,7 @@ bool TutorialGame::SelectObject() {
 	if (inSelectionMode) {
 		renderer->DrawString("Press Q to change to camera mode!", Vector2(10, 0));
 
-		if (Window::GetMouse()->ButtonDown(NCL::MouseButtons::LEFT)) {
+		if (Window::GetMouse()->ButtonPressed(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
 				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
 				selectionObject = nullptr;
@@ -303,7 +303,29 @@ added linear motion into our physics system. After the second tutorial, objects 
 line - after the third, they'll be able to twist under torque aswell.
 */
 
-void TutorialGame::MoveSelectedObject() {
+void TutorialGame::MoveSelectedObject()
+{
+	renderer->DrawString("Click Force:" + std::to_string(forceMagnitude), Vector2(10, 20)); //Draw debug text at 10 ,20
+	forceMagnitude += Window::GetMouse()->GetWheelMovement() * 100.0f;
+	
+	if (!selectionObject)
+	{
+		return;//We haven ’t selected anything !
+	}
+	//Push the selected object !
+	if (Window::GetMouse()->ButtonPressed(NCL::MouseButtons::RIGHT))
+	{
+		Ray ray = CollisionDetection::BuildRayFromMouse(*world->GetMainCamera());
+		
+		RayCollision closestCollision;
+		if (world->Raycast(ray, closestCollision, true))
+		{
+			if (closestCollision.node == selectionObject)
+			{
+				selectionObject->GetPhysicsObject()->AddForce(ray.GetDirection() * forceMagnitude);
+			}
+		}
+	}
 
 }
 

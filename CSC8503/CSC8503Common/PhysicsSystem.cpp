@@ -203,7 +203,33 @@ This function will update both linear and angular acceleration,
 based on any forces that have been accumulated in the objects during
 the course of the previous game frame.
 */
-void PhysicsSystem::IntegrateAccel(float dt) {
+void PhysicsSystem::IntegrateAccel(float dt)
+{
+	std::vector<GameObject*>::const_iterator first;
+	std::vector<GameObject*>::const_iterator last;
+	gameWorld.GetObjectIterators(first, last);
+	
+	for (auto i = first; i != last; ++i)
+	{
+		PhysicsObject* object = (*i)->GetPhysicsObject();
+		if (object == nullptr)
+		{
+			continue; // No physics object for this GameObject !
+		}
+		float inverseMass = object->GetInverseMass();
+		
+		Vector3 linearVel = object->GetLinearVelocity();
+		Vector3 force = object->GetForce();
+		Vector3 accel = force * inverseMass;
+		
+		if (applyGravity && inverseMass > 0)
+		{
+			accel += gravity; // don’t move infinitely heavy things
+		}
+		
+		linearVel += accel * dt; // integrate accel !
+		object->SetLinearVelocity(linearVel);
+	}
 
 }
 /*
@@ -212,8 +238,31 @@ position and orientation. It may be called multiple times
 throughout a physics update, to slowly move the objects through
 the world, looking for collisions.
 */
-void PhysicsSystem::IntegrateVelocity(float dt) {
-
+void PhysicsSystem::IntegrateVelocity(float dt)
+{
+	std::vector<GameObject*>::const_iterator first;
+	std::vector<GameObject*>::const_iterator last;
+	gameWorld.GetObjectIterators(first, last);
+	float dampingFactor = 1.0f - 0.95f;
+	float frameDamping = powf(dampingFactor, dt);
+	
+	for (auto i = first; i != last; ++i)
+	{
+		PhysicsObject* object = (*i)->GetPhysicsObject();
+		if (object == nullptr)
+		{
+			continue;
+		}
+		Transform& transform = (*i)->GetTransform();
+		// Position Stuff
+		Vector3 position = transform.GetLocalPosition();
+		Vector3 linearVel = object->GetLinearVelocity();
+		position += linearVel * dt;
+		transform.SetLocalPosition(position);
+		// Linear Damping
+		linearVel = linearVel * frameDamping;
+		object->SetLinearVelocity(linearVel);
+	}
 }
 
 /*
