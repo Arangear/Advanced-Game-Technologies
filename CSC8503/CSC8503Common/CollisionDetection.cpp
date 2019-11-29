@@ -113,7 +113,7 @@ bool CollisionDetection::RaySphereIntersection(const Ray&r, const Transform& wor
 	float sphereRadius = volume.GetRadius();
 
 	//So that the sphere does not see itself as it's target
-	if ((spherePos - r.GetPosition()).Length() < volume.GetRadius())
+	if (spherePos == r.GetPosition())
 	{
 		return false;
 	}
