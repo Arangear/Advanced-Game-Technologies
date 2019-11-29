@@ -46,12 +46,23 @@ namespace NCL {
 				return colour;
 			}
 
+			void SetOriginalColour(const Vector4& _colour)
+			{
+				originalColour = _colour;
+			}
+
+			void RestoreColour()
+			{
+				colour = originalColour;
+			}
+
 		protected:
 			MeshGeometry*	mesh;
 			TextureBase*	texture;
 			ShaderBase*		shader;
 			Transform*		transform;
 			Vector4			colour;
+			Vector4			originalColour;
 		};
 	}
 }

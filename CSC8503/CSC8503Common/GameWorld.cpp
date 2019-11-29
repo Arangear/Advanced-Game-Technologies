@@ -92,7 +92,7 @@ bool GameWorld::Raycast(Ray& r, RayCollision& closestCollision, bool closestObje
 	RayCollision collision;
 
 	for (auto& i : gameObjects) {
-		if (!i->GetLayer() == interactibleLayer)
+		if (!(i->GetLayer() == interactibleLayer))
 		{
 			continue;
 		}

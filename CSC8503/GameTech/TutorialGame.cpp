@@ -230,23 +230,20 @@ letting you move the camera around.
 bool TutorialGame::SelectObject() {
 	if (selectionObject)
 	{
-		RayCollision closestCollision;
-		Ray front(selectionObject->GetTransform().GetWorldPosition(), Vector3(0.0f, 0.0f, -1.0f));
-		if (world->Raycast(front, closestCollision, true))
+		if (targetObject)
 		{
-			if (targetObject)
-			{
-				targetObject->GetRenderObject()->SetColour(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-				targetObject = nullptr;
-			}
-			targetObject = (GameObject*)closestCollision.node;
-			targetObject->GetRenderObject()->SetColour(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-		}
-		else if (targetObject)
-		{
-			targetObject->GetRenderObject()->SetColour(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			targetObject->GetRenderObject()->RestoreColour();
 			targetObject = nullptr;
 		}
+
+		RayCollision closestCollision;
+		Ray front(selectionObject->GetConstTransform().GetWorldPosition(), selectionObject->GetConstTransform().GetWorldOrientation() * Vector3(0.0f, 0.0f, -1.0f));
+
+		if (world->Raycast(front, closestCollision, true))
+		{
+			targetObject = (GameObject*)closestCollision.node;
+			targetObject->GetRenderObject()->SetColour(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+		}		
 	}
 	if (selectionObject && targetObject)
 	{
@@ -269,12 +266,12 @@ bool TutorialGame::SelectObject() {
 
 		if (Window::GetMouse()->ButtonPressed(NCL::MouseButtons::LEFT)) {
 			if (selectionObject) {	//set colour to deselected;
-				selectionObject->GetRenderObject()->SetColour(Vector4(1, 1, 1, 1));
+				selectionObject->GetRenderObject()->RestoreColour();
 				selectionObject = nullptr;
 
 				if (targetObject)
 				{
-					targetObject->GetRenderObject()->SetColour(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+					targetObject->GetRenderObject()->RestoreColour();
 					targetObject = nullptr;
 				}
 			}
@@ -439,9 +436,25 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	sphere->SetPhysicsObject(new PhysicsObject(&sphere->GetTransform(), sphere->GetBoundingVolume()));
 
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
-	sphere->GetPhysicsObject()->InitSphereInertia();
 
-	sphere->SetLayer(1);
+	if (rand() % 2)
+	{
+		sphere->GetPhysicsObject()->InitSphereInertia();
+		//Just to see which ones are full
+		Vector4 colour = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
+		sphere->GetRenderObject()->SetColour(colour);
+		sphere->GetRenderObject()->SetOriginalColour(colour);
+	}
+	else
+	{
+		sphere->GetPhysicsObject()->InitHollowSphereInertia();
+		//Just to see which ones are hollow
+		Vector4 colour = Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+		sphere->GetRenderObject()->SetColour(colour);
+		sphere->GetRenderObject()->SetOriginalColour(colour);
+	}
+
+	//sphere->SetLayer(1);
 
 	world->AddGameObject(sphere);
 
@@ -585,11 +598,12 @@ void TutorialGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacin
 
 void TutorialGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing) {
 	float sphereRadius = 1.0f;
-	Vector3 cubeDims = Vector3(1, 1, 1);
+	float mult = 2.0f;
+	Vector3 cubeDims = Vector3(1, 1, mult);
 
 	for (int x = 0; x < numCols; ++x) {
 		for (int z = 0; z < numRows; ++z) {
-			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
+			Vector3 position = Vector3((x - numCols / 2.0f) * colSpacing * mult, 10.0f, (z - numRows / 2.0f) * rowSpacing * mult);
 
 			if (rand() % 2) {
 				AddCubeToWorld(position, cubeDims);
