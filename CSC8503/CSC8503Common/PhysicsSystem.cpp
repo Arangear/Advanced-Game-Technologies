@@ -214,7 +214,7 @@ void PhysicsSystem::IntegrateAccel(float dt)
 		PhysicsObject* object = (*i)->GetPhysicsObject();
 		if (object == nullptr)
 		{
-			continue; // No physics object for this GameObject !
+			continue; //No physics object for this GameObject !
 		}
 		float inverseMass = object->GetInverseMass();
 		
@@ -224,11 +224,22 @@ void PhysicsSystem::IntegrateAccel(float dt)
 		
 		if (applyGravity && inverseMass > 0)
 		{
-			accel += gravity; // don’t move infinitely heavy things
+			accel += gravity; //Don’t move infinitely heavy things
 		}
 		
-		linearVel += accel * dt; // integrate accel !
+		linearVel += accel * dt; //Integrate accel !
 		object->SetLinearVelocity(linearVel);
+
+		//Angular stuff
+		Vector3 torque = object->GetTorque();
+		Vector3 angVel = object->GetAngularVelocity();
+		
+		object->UpdateInertiaTensor(); //Update tensor vs orientation
+		
+		Vector3 angAccel = object->GetInertiaTensor() * torque;
+		
+		angVel += angAccel * dt; //Integrate angular accel !
+		object->SetAngularVelocity(angVel);
 	}
 
 }
@@ -254,14 +265,27 @@ void PhysicsSystem::IntegrateVelocity(float dt)
 			continue;
 		}
 		Transform& transform = (*i)->GetTransform();
-		// Position Stuff
+		//Position Stuff
 		Vector3 position = transform.GetLocalPosition();
 		Vector3 linearVel = object->GetLinearVelocity();
 		position += linearVel * dt;
 		transform.SetLocalPosition(position);
-		// Linear Damping
+		//Linear Damping
 		linearVel = linearVel * frameDamping;
 		object->SetLinearVelocity(linearVel);
+
+		//Orientation Stuff
+		Quaternion orientation = transform.GetLocalOrientation();
+		Vector3 angVel = object->GetAngularVelocity();
+		
+		orientation = orientation + (Quaternion(angVel * dt * 0.5f, 0.0f) * orientation);
+		orientation.Normalise();
+		
+		transform.SetLocalOrientation(orientation);
+		
+		//Damp the angular velocity too
+		angVel = angVel * frameDamping;
+		object->SetAngularVelocity(angVel);
 	}
 }
 

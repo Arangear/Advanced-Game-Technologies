@@ -335,7 +335,7 @@ void TutorialGame::MoveSelectedObject()
 		{
 			if (closestCollision.node == selectionObject)
 			{
-				selectionObject->GetPhysicsObject()->AddForce(ray.GetDirection() * forceMagnitude);
+				selectionObject->GetPhysicsObject()->AddForceAtPosition(ray.GetDirection() * forceMagnitude, closestCollision.collidedAt);
 			}
 		}
 	}
