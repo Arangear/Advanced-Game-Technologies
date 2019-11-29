@@ -111,11 +111,23 @@ bool CollisionDetection::RayOBBIntersection(const Ray&r, const Transform& worldT
 bool CollisionDetection::RaySphereIntersection(const Ray&r, const Transform& worldTransform, const SphereVolume& volume, RayCollision& collision) {
 	Vector3 spherePos = worldTransform.GetWorldPosition();
 	float sphereRadius = volume.GetRadius();
+
+	//So that the sphere does not see itself as it's target
+	if ((spherePos - r.GetPosition()).Length() < volume.GetRadius())
+	{
+		return false;
+	}
 	
 	// Get the direction between the ray origin and the sphere origin
-	Vector3 dir = (spherePos - r.GetPosition());
+	Vector3 dir = spherePos - r.GetPosition();
 	// Then project the sphere’s origin onto our ray direction vector
 	float sphereProj = Vector3::Dot(dir, r.GetDirection());
+
+	if (sphereProj < 0.0f)
+	{
+		return false; // point is behind the ray !
+	}
+
 	// Get closest point on ray line to sphere
 	Vector3 point = r.GetPosition() + (r.GetDirection() * sphereProj);
 	
@@ -125,10 +137,9 @@ bool CollisionDetection::RaySphereIntersection(const Ray&r, const Transform& wor
 	{
 		return false;
 	}
-	float sNorm = sphereDist / sphereRadius;
-	sNorm = cos(DegreesToRadians(sNorm * 90.0f));
+	float offset = sqrt((sphereRadius * sphereRadius) - (sphereDist * sphereDist));
 	
-	collision.rayDistance = sphereProj - (sphereRadius * sNorm);
+	collision.rayDistance = sphereProj - (sphereRadius * offset);
 	collision.collidedAt = r.GetPosition() + (r.GetDirection() * collision.rayDistance);
 	return true;
 }
