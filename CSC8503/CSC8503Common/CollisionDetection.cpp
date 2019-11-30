@@ -41,6 +41,11 @@ bool CollisionDetection::RayIntersection(const Ray& r,GameObject& object, RayCol
 }
 
 bool CollisionDetection::RayBoxIntersection(const Ray&r, const Vector3& boxPos, const Vector3& boxSize, RayCollision& collision) {
+	if (boxPos == r.GetPosition())
+	{
+		return false;
+	}
+
 	Vector3 boxMin = boxPos - boxSize;
 	Vector3 boxMax = boxPos + boxSize;
 	
