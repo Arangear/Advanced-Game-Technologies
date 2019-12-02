@@ -179,7 +179,8 @@ void PhysicsSystem::BasicCollisionDetection()
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(*i, *j, info))
 			{
-				ImpulseResolveCollision(*info.a, *info.b, info.point);
+				//ImpulseResolveCollision(*info.a, *info.b, info.point);
+				ResolveSpringCollision(*info.a, *info.b, info.point);
 				info.framesLeft = numCollisionFrames;
 				allCollisions.insert(info);
 			}
@@ -227,7 +228,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Vector3 inertiaB = Vector3::Cross(physB->GetInertiaTensor() * Vector3::Cross(relativeB, p.normal), relativeB);
 	float angularEffect = Vector3::Dot(inertiaA + inertiaB, p.normal);
 	
-	float cRestitution = 0.66f; // disperse some kinectic energy
+	float cRestitution = physA->GetElasticity() * physB->GetElasticity(); // disperse some kinectic energy
 	
 	float j = (-(1.0f + cRestitution) * impulseForce) / (totalMass + angularEffect);
 	
@@ -238,6 +239,20 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	
 	physA->ApplyAngularImpulse(Vector3::Cross(relativeA, -fullImpulse));
 	physB->ApplyAngularImpulse(Vector3::Cross(relativeB, fullImpulse));
+}
+
+void PhysicsSystem::ResolveSpringCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const
+{
+	PhysicsObject* physA = a.GetPhysicsObject();
+	PhysicsObject* physB = b.GetPhysicsObject();
+
+	Vector3 springA = p.localA;
+	Vector3 springB = p.localB;
+
+	Vector3 direction = p.normal * p.penetration;
+	
+	physA->AddForceAtRelativePosition(-direction * physA->GetBuoyancy(), springA);
+	physA->AddForceAtRelativePosition(direction * physB->GetBuoyancy(), springB);
 }
 
 /*
@@ -338,6 +353,7 @@ void PhysicsSystem::IntegrateVelocity(float dt)
 		Vector3 linearVel = object->GetLinearVelocity();
 		position += linearVel * dt;
 		transform.SetLocalPosition(position);
+		transform.SetWorldPosition(position);
 		//Linear Damping
 		linearVel = linearVel * frameDamping;
 		object->SetLinearVelocity(linearVel);

@@ -23,6 +23,16 @@ namespace NCL {
 				return angularVelocity;
 			}
 
+			float GetElasticity() const
+			{
+				return elasticity;
+			}
+			
+			float GetBuoyancy() const
+			{
+				return buoyancy;
+			}
+
 			Vector3 GetTorque() const {
 				return torque;
 			}
@@ -45,6 +55,7 @@ namespace NCL {
 			void AddForce(const Vector3& force);
 
 			void AddForceAtPosition(const Vector3& force, const Vector3& position);
+			void AddForceAtRelativePosition(const Vector3& addedForce, const Vector3& position);
 
 			void AddTorque(const Vector3& torque);
 
@@ -57,6 +68,16 @@ namespace NCL {
 
 			void SetAngularVelocity(const Vector3& v) {
 				angularVelocity = v;
+			}
+
+			void SetElasticity(const float& e)
+			{
+				elasticity = e;
+			}
+
+			void SetBuoyancy(const float& b)
+			{
+				buoyancy = b;
 			}
 
 			void InitCubeInertia();
@@ -75,12 +96,12 @@ namespace NCL {
 
 			float inverseMass;
 			float elasticity;
+			float buoyancy;
 			float friction;
 
 			//linear stuff
 			Vector3 linearVelocity;
 			Vector3 force;
-			
 
 			//angular stuff
 			Vector3 angularVelocity;
