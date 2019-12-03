@@ -56,24 +56,24 @@ void PhysicsSystem::Update(float dt) {
 
 	float iterationDt = 1.0f / 120.0f; //Ideally we'll have 120 physics updates a second 
 
-	if (dTOffset > 8 * iterationDt) { //the physics engine cant catch up!
-		iterationDt = 1.0f / 15.0f; //it'll just have to run bigger timesteps...
-		//std::cout << "Setting physics iterations to 15" << iterationDt << std::endl;
-	}
-	else if (dTOffset > 4  * iterationDt) { //the physics engine cant catch up!
-		iterationDt = 1.0f / 30.0f; //it'll just have to run bigger timesteps...
-		//std::cout << "Setting iteration dt to 4 case " << iterationDt << std::endl;
-	}
-	else if (dTOffset > 2* iterationDt) { //the physics engine cant catch up!
-		iterationDt = 1.0f / 60.0f; //it'll just have to run bigger timesteps...
-		//std::cout << "Setting iteration dt to 2 case " << iterationDt << std::endl;
-	}
-	else {
-		//std::cout << "Running normal update " << iterationDt << std::endl;
-	}
+	//if (dTOffset > 8 * iterationDt) { //the physics engine cant catch up!
+	//	iterationDt = 1.0f / 15.0f; //it'll just have to run bigger timesteps...
+	//	//std::cout << "Setting physics iterations to 15" << iterationDt << std::endl;
+	//}
+	//else if (dTOffset > 4  * iterationDt) { //the physics engine cant catch up!
+	//	iterationDt = 1.0f / 30.0f; //it'll just have to run bigger timesteps...
+	//	//std::cout << "Setting iteration dt to 4 case " << iterationDt << std::endl;
+	//}
+	//else if (dTOffset > 2* iterationDt) { //the physics engine cant catch up!
+	//	iterationDt = 1.0f / 60.0f; //it'll just have to run bigger timesteps...
+	//	//std::cout << "Setting iteration dt to 2 case " << iterationDt << std::endl;
+	//}
+	//else {
+	//	//std::cout << "Running normal update " << iterationDt << std::endl;
+	//}
 
 	int constraintIterationCount = 10;
-	iterationDt = dt;
+	//iterationDt = dt;
 
 	if (useBroadPhase) {
 		UpdateObjectAABBs();
@@ -106,7 +106,7 @@ void PhysicsSystem::Update(float dt) {
 
 	UpdateCollisionList(); //Remove any old collisions
 	//std::cout << iteratorCount << " , " << iterationDt << std::endl;
-	float time = testTimer.GetTimeDeltaSeconds();
+	//float time = testTimer.GetTimeDeltaSeconds();
 	//std::cout << "Physics time taken: " << time << std::endl;
 }
 
@@ -246,13 +246,10 @@ void PhysicsSystem::ResolveSpringCollision(GameObject& a, GameObject& b, Collisi
 	PhysicsObject* physA = a.GetPhysicsObject();
 	PhysicsObject* physB = b.GetPhysicsObject();
 
-	Vector3 springA = p.localA;
-	Vector3 springB = p.localB;
-
 	Vector3 direction = p.normal * p.penetration;
 	
-	physA->AddForceAtRelativePosition(-direction * physA->GetBuoyancy(), springA);
-	physA->AddForceAtRelativePosition(direction * physB->GetBuoyancy(), springB);
+	physA->AddForceAtRelativePosition(-direction * physA->GetBuoyancy(), p.localA);
+	physB->AddForceAtRelativePosition(direction * physB->GetBuoyancy(), p.localB);
 }
 
 /*

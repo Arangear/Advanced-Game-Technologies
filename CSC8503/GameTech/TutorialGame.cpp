@@ -443,7 +443,7 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	{
 		sphere->GetPhysicsObject()->InitSphereInertia();
 		sphere->GetPhysicsObject()->SetElasticity(0.1f);
-		sphere->GetPhysicsObject()->SetBuoyancy(10.0f);
+		sphere->GetPhysicsObject()->SetBuoyancy(100.0f);
 		//Just to see which ones are full
 		Vector4 colour = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
 		sphere->GetRenderObject()->SetColour(colour);
@@ -453,7 +453,7 @@ GameObject* TutorialGame::AddSphereToWorld(const Vector3& position, float radius
 	{
 		sphere->GetPhysicsObject()->InitHollowSphereInertia();
 		sphere->GetPhysicsObject()->SetElasticity(0.9f);
-		sphere->GetPhysicsObject()->SetBuoyancy(100.0f);
+		sphere->GetPhysicsObject()->SetBuoyancy(1000.0f);
 		//Just to see which ones are hollow
 		Vector4 colour = Vector4(1.0f, 0.0f, 1.0f, 1.0f);
 		sphere->GetRenderObject()->SetColour(colour);
@@ -480,6 +480,7 @@ GameObject* TutorialGame::AddCubeToWorld(const Vector3& position, Vector3 dimens
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
 	cube->GetPhysicsObject()->SetElasticity(0.5f);
+	cube->GetPhysicsObject()->SetBuoyancy(50.0f);
 
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
 	cube->GetPhysicsObject()->InitCubeInertia();
