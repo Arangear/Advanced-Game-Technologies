@@ -375,7 +375,7 @@ void CourseworkGame::MoveSelectedObject()
 void CourseworkGame::InitCamera()
 {
 	world->GetMainCamera()->SetNearPlane(0.5f);
-	world->GetMainCamera()->SetFarPlane(500.0f);
+	world->GetMainCamera()->SetFarPlane(2000.0f);
 	world->GetMainCamera()->SetPitch(-15.0f);
 	world->GetMainCamera()->SetYaw(315.0f);
 	world->GetMainCamera()->SetPosition(Vector3(-60, 40, 60));
@@ -387,39 +387,91 @@ void CourseworkGame::InitWorld()
 	world->ClearAndErase();
 	physics->Clear();
 
-	InitMixedGridWorld(10, 10, 3.5f, 3.5f);
-	//AddGooseToWorld(Vector3(30, 2, 0));
-	//AddAppleToWorld(Vector3(35, 2, 0));
+	//Setup
+	Vector3 floorPosition(0, -2, 0);
+	Vector3 floorSize(500, 2, 500);
+	Vector3 wallSizeX(500, 500, 2);
+	Vector3 wallSizeZ(2, 500, 500);
+	Vector3 islandSize(50, 2, 50);
+	Vector4 floorColour(0, 0, 1, 1);
+	Vector4 islandColour(1, 1, 0, 1);
+	Vector4 terrainColour(0, 1, 0, 1);
+	//Cage
+	AddFloorToWorld(floorPosition, floorSize, floorColour);
+	AddWallToWorld(floorPosition + Vector3(floorSize.x, floorSize.x, 0.0f), wallSizeZ);
+	AddWallToWorld(floorPosition - Vector3(floorSize.x, -floorSize.x, 0.0f), wallSizeZ);
+	AddWallToWorld(floorPosition + Vector3(0.0f, floorSize.z, floorSize.z), wallSizeX);
+	AddWallToWorld(floorPosition - Vector3(0.0f, -floorSize.z, floorSize.z), wallSizeX);
+	//Islands
+	AddFloorToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour);
+	AddFloorToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour);
+	//Terrain
+	AddFloorToWorld(Vector3(0, -2, 0), Vector3(500, 3, 300), terrainColour);
+	AddFloorToWorld(Vector3(400, 5, -200), Vector3(100, 5, 100), terrainColour);
+	AddFloorToWorld(Vector3(420, 15, -220), Vector3(80, 5, 80), terrainColour);
+	AddFloorToWorld(Vector3(440, 25, -240), Vector3(60, 5, 60), terrainColour);
+	AddFloorToWorld(Vector3(460, 35, -260), Vector3(40, 5, 40), terrainColour);
 
-	//AddParkKeeperToWorld(Vector3(40, 2, 0));
-	//AddCharacterToWorld(Vector3(45, 2, 0));
-
-	//AddFloorToWorld(Vector3(0, -2, 0));
+	AddFloorToWorld(Vector3(-400, 5, 200), Vector3(100, 5, 100), terrainColour);
+	AddFloorToWorld(Vector3(-420, 15, 220), Vector3(80, 5, 80), terrainColour);
+	AddFloorToWorld(Vector3(-440, 25, 240), Vector3(60, 5, 60), terrainColour);
+	AddFloorToWorld(Vector3(-460, 35, 260), Vector3(40, 5, 40), terrainColour);
+	//Trampoline
+	//AddTrampolineToWorld(Vector3(0, 0, 0));
 }
 
 //From here on it's functions to add in objects to the world!
 
-GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position)
+GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour)
 {
 	GameObject* floor = new GameObject();
 
-	Vector3 floorSize = Vector3(100, 2, 100);
-	AABBVolume* volume = new AABBVolume(floorSize);
+	AABBVolume* volume = new AABBVolume(scale);
 	floor->SetBoundingVolume((CollisionVolume*)volume);
-	floor->GetTransform().SetWorldScale(floorSize);
+	floor->GetTransform().SetWorldScale(scale);
 	floor->GetTransform().SetWorldPosition(position);
 
 	floor->SetRenderObject(new RenderObject(&floor->GetTransform(), cubeMesh, basicTex, basicShader));
 	floor->SetPhysicsObject(new PhysicsObject(&floor->GetTransform(), floor->GetBoundingVolume()));
 	floor->GetPhysicsObject()->SetElasticity(0.0f);
 	floor->GetPhysicsObject()->SetBuoyancy(0.0f);
+	floor->GetPhysicsObject()->SetGravityAffinity(false);
 
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
 
+	floor->GetRenderObject()->SetColour(colour);
+	floor->GetRenderObject()->SetOriginalColour(colour);
+
 	world->AddGameObject(floor);
 
 	return floor;
+}
+
+GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector3& scale)
+{
+	GameObject* wall = new GameObject();
+
+	AABBVolume* volume = new AABBVolume(scale);
+	wall->SetBoundingVolume((CollisionVolume*)volume);
+	wall->GetTransform().SetWorldScale(scale);
+	wall->GetTransform().SetWorldPosition(position);
+
+	wall->SetRenderObject(new RenderObject(&wall->GetTransform(), cubeMesh, basicTex, basicShader));
+	wall->SetPhysicsObject(new PhysicsObject(&wall->GetTransform(), wall->GetBoundingVolume()));
+	wall->GetPhysicsObject()->SetElasticity(0.0f);
+	wall->GetPhysicsObject()->SetBuoyancy(0.0f);
+	wall->GetPhysicsObject()->SetGravityAffinity(false);
+
+	wall->GetPhysicsObject()->SetInverseMass(0);
+	wall->GetPhysicsObject()->InitCubeInertia();
+
+	wall->GetRenderObject()->SetColour(Vector4(0.5, 0.5, 0.5, 1));
+	wall->GetRenderObject()->SetOriginalColour(Vector4(0.5, 0.5, 0.5, 1));
+
+	world->AddGameObject(wall);
+
+	return wall;
 }
 
 GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
@@ -588,87 +640,5 @@ GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
 	world->AddGameObject(apple);
 
 	return apple;
-}
-
-void CourseworkGame::InitSphereGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, float radius) {
-	for (int x = 0; x < numCols; ++x) {
-		for (int z = 0; z < numRows; ++z) {
-			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-			AddSphereToWorld(position, radius, 1.0f);
-		}
-	}
-	AddFloorToWorld(Vector3(0, -2, 0));
-}
-
-void CourseworkGame::InitMixedGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing) {
-	float sphereRadius = 1.0f;
-	float mult = 2.0f;
-	Vector3 cubeDims = Vector3(1, 1, mult);
-
-	for (int x = 0; x < numCols; ++x) {
-		for (int z = 0; z < numRows; ++z) {
-			Vector3 position = Vector3((x - numCols / 2.0f) * colSpacing * mult, 10.0f, (z - numRows / 2.0f) * rowSpacing * mult);
-
-			if (rand() % 2) {
-				AddCubeToWorld(position, cubeDims);
-			}
-			else {
-				AddSphereToWorld(position, sphereRadius);
-			}
-		}
-	}
-	AddFloorToWorld(Vector3(0, -2, 0));
-}
-
-void CourseworkGame::InitCubeGridWorld(int numRows, int numCols, float rowSpacing, float colSpacing, const Vector3& cubeDims) {
-	for (int x = 1; x < numCols+1; ++x) {
-		for (int z = 1; z < numRows+1; ++z) {
-			Vector3 position = Vector3(x * colSpacing, 10.0f, z * rowSpacing);
-			AddCubeToWorld(position, cubeDims, 1.0f);
-		}
-	}
-	AddFloorToWorld(Vector3(0, -2, 0));
-}
-
-void CourseworkGame::BridgeConstraintTest() {
-	Vector3 cubeSize = Vector3(8, 8, 8);
-
-	float	invCubeMass = 5;
-	int		numLinks	= 25;
-	float	maxDistance	= 30;
-	float	cubeDistance = 20;
-
-	Vector3 startPos = Vector3(500, 1000, 500);
-
-	GameObject* start = AddCubeToWorld(startPos + Vector3(0, 0, 0), cubeSize, 0);
-
-	GameObject* end = AddCubeToWorld(startPos + Vector3((numLinks + 2) * cubeDistance, 0, 0), cubeSize, 0);
-
-	GameObject* previous = start;
-
-	for (int i = 0; i < numLinks; ++i) {
-		GameObject* block = AddCubeToWorld(startPos + Vector3((i + 1) * cubeDistance, 0, 0), cubeSize, invCubeMass);
-		PositionConstraint* constraint = new PositionConstraint(previous, block, maxDistance);
-		world->AddConstraint(constraint);
-		previous = block;
-	}
-
-	PositionConstraint* constraint = new PositionConstraint(previous, end, maxDistance);
-	world->AddConstraint(constraint);
-}
-
-void CourseworkGame::SimpleGJKTest() {
-	Vector3 dimensions		= Vector3(5, 5, 5);
-	Vector3 floorDimensions = Vector3(100, 2, 100);
-
-	GameObject* fallingCube = AddCubeToWorld(Vector3(0, 20, 0), dimensions, 10.0f);
-	GameObject* newFloor	= AddCubeToWorld(Vector3(0, 0, 0), floorDimensions, 0.0f);
-
-	delete fallingCube->GetBoundingVolume();
-	delete newFloor->GetBoundingVolume();
-
-	fallingCube->SetBoundingVolume((CollisionVolume*)new OBBVolume(dimensions));
-	newFloor->SetBoundingVolume((CollisionVolume*)new OBBVolume(floorDimensions));
-
 }
 
