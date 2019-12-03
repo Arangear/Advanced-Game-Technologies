@@ -9,6 +9,7 @@
 
 #include "../CSC8503Common/NavigationGrid.h"
 
+#include "CourseworkGame.h"
 #include "NetworkedGame.h"
 
 using namespace NCL;
@@ -58,7 +59,7 @@ int main() {
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
-	TutorialGame* g = new TutorialGame();
+	CourseworkGame* g = new CourseworkGame();
 
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
