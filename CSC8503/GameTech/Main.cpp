@@ -9,7 +9,6 @@
 
 #include "../CSC8503Common/NavigationGrid.h"
 
-#include "TutorialGame.h"
 #include "NetworkedGame.h"
 
 using namespace NCL;

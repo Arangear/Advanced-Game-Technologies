@@ -140,17 +140,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CourseworkGame.cpp" />
     <ClCompile Include="GameTechRenderer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NetworkedGame.cpp" />
     <ClCompile Include="NetworkPlayer.cpp" />
-    <ClCompile Include="TutorialGame.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CourseworkGame.h" />
     <ClInclude Include="GameTechRenderer.h" />
     <ClInclude Include="NetworkedGame.h" />
     <ClInclude Include="NetworkPlayer.h" />
-    <ClInclude Include="TutorialGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

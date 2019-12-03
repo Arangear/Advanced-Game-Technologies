@@ -3,12 +3,15 @@
 #include "../CSC8503Common/PhysicsSystem.h"
 
 
-namespace NCL {
-	namespace CSC8503 {
-		class TutorialGame		{
+namespace NCL
+{
+	namespace CSC8503
+	{
+		class CourseworkGame
+		{
 		public:
-			TutorialGame();
-			~TutorialGame();
+			CourseworkGame();
+			~CourseworkGame();
 
 			virtual void UpdateGame(float dt);
 
@@ -74,7 +77,8 @@ namespace NCL {
 			//Coursework Additional functionality	
 			GameObject* lockedObject	= nullptr;
 			Vector3 lockedOffset		= Vector3(0, 14, 20);
-			void LockCameraToObject(GameObject* o) {
+			void LockCameraToObject(GameObject* o)
+			{
 				lockedObject = o;
 			}
 		};
