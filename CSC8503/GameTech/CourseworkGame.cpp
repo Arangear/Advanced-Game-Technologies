@@ -441,6 +441,7 @@ GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radi
 		sphere->GetPhysicsObject()->InitSphereInertia();
 		sphere->GetPhysicsObject()->SetElasticity(0.1f);
 		sphere->GetPhysicsObject()->SetBuoyancy(100.0f);
+		sphere->GetPhysicsObject()->SetGravityAffinity(false);
 		//Just to see which ones are full
 		Vector4 colour = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
 		sphere->GetRenderObject()->SetColour(colour);

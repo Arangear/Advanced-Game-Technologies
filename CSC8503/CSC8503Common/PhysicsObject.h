@@ -80,6 +80,16 @@ namespace NCL {
 				buoyancy = b;
 			}
 
+			const bool IsAffectedByGravity() const
+			{
+				return affectedByGravity;
+			}
+
+			void SetGravityAffinity(bool value)
+			{
+				affectedByGravity = value;
+			}
+
 			void InitCubeInertia();
 			void InitSphereInertia();
 			void InitHollowSphereInertia();
@@ -98,6 +108,7 @@ namespace NCL {
 			float elasticity;
 			float buoyancy;
 			float friction;
+			bool affectedByGravity;
 
 			//linear stuff
 			Vector3 linearVelocity;
