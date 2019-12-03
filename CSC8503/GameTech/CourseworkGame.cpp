@@ -417,6 +417,7 @@ void CourseworkGame::InitWorld()
 	AddFloorToWorld(Vector3(-440, 25, 240), Vector3(60, 5, 60), terrainColour);
 	AddFloorToWorld(Vector3(-460, 35, 260), Vector3(40, 5, 40), terrainColour);
 	//Trampoline
+	//TODO: implement
 	//AddTrampolineToWorld(Vector3(0, 0, 0));
 }
 
