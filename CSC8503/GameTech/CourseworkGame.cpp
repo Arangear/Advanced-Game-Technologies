@@ -62,6 +62,8 @@ CourseworkGame::~CourseworkGame()
 
 void CourseworkGame::UpdateGame(float dt)
 {
+	ManageSprint(dt);
+
 	CameraMovement();
 
 	UpdateKeys(dt);
@@ -119,7 +121,7 @@ void  CourseworkGame::CameraMovement()
 
 void CourseworkGame::MovePlayerCharacter(float dt)
 {
-	float rotationSpeed = 40.0f;
+	float rotationSpeed = 60.0f;
 	Vector3 pyr = playerCharacter->GetConstTransform().GetLocalOrientation().ToEuler();
 
 	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::A))
@@ -145,6 +147,15 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::SPACE))
 	{
 		playerCharacter->GetPhysicsObject()->AddForce(Vector3(0, 2, 0) * forceMagnitude);
+	}
+	if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::SHIFT))
+	{
+		if (sprintCD <= 0)
+		{
+			sprint = 3.0f;
+			sprintCD = 5.0f;
+			forceMagnitude *= 2;
+		}
 	}
 }
 
@@ -252,9 +263,9 @@ GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector
 	return wall;
 }
 
-void NCL::CSC8503::CourseworkGame::AddTrampolineToWorld(const Vector3& position)
+void CourseworkGame::AddTrampolineToWorld(const Vector3& position)
 {
-	AddFloorToWorld(position, Vector3(50, 3, 50), Vector4(1, 0, 0, 1), CollisionResolution::Spring);
+	AddFloorToWorld(position, Vector3(50, 3, 50), Vector4(1, 0, 0, 1), CollisionResolution::Trampoline);
 	AddWallToWorld(position + Vector3(50, 0, 3), Vector3(3, 5, 50));
 	AddWallToWorld(position - Vector3(50, 0, 3), Vector3(3, 5, 50));
 	AddWallToWorld(position + Vector3(-3, 0, 50), Vector3(50, 5, 3));
@@ -332,7 +343,6 @@ GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 
 	GameObject* goose = new GameObject();
 
-
 	SphereVolume* volume = new SphereVolume(size);
 	goose->SetBoundingVolume((CollisionVolume*)volume);
 
@@ -346,7 +356,7 @@ GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 	goose->GetPhysicsObject()->InitSphereInertia();
 	goose->GetPhysicsObject()->SetBuoyancy(130);
 	goose->GetPhysicsObject()->SetElasticity(0.7f);
-	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring);
+	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline);
 
 	world->AddGameObject(goose);
 
@@ -426,9 +436,32 @@ GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
 
 	apple->GetPhysicsObject()->SetInverseMass(1.0f);
 	apple->GetPhysicsObject()->InitSphereInertia();
+	apple->GetPhysicsObject()->SetBuoyancy(50);
+	apple->GetPhysicsObject()->SetElasticity(0.7f);
+	apple->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Collect);
+	apple->GetPhysicsObject()->SetGravityAffinity(false);
+
+	apple->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));
+	apple->GetRenderObject()->SetOriginalColour(Vector4(1, 0, 0, 1));
 
 	world->AddGameObject(apple);
 
 	return apple;
+}
+
+void NCL::CSC8503::CourseworkGame::ManageSprint(float dt)
+{
+	if (sprint <= 0.0)
+	{
+		forceMagnitude = 300.0f;
+	}
+	if (sprint > 0)
+	{
+		sprint -= dt;
+	}
+	if (sprintCD > 0)
+	{
+		sprintCD -= dt;
+	}
 }
 

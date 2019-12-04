@@ -179,13 +179,28 @@ void PhysicsSystem::BasicCollisionDetection()
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(*i, *j, info))
 			{
-				if ((info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution()) == CollisionResolution::Impulse)
+				switch (info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution())
+				{
+				case CollisionResolution::Impulse:
 				{
 					ImpulseResolveCollision(*info.a, *info.b, info.point);
+					break;
 				}
-				else if ((info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution()) == CollisionResolution::Spring)
+				case CollisionResolution::Spring:
 				{
 					ResolveSpringCollision(*info.a, *info.b, info.point);
+					break;
+				}
+				case CollisionResolution::Collect:
+				{
+					//TODO: implement
+					break;
+				}
+				case CollisionResolution::Trampoline:
+				{
+					ResolveTrampolineCollision(*info.a, *info.b, info.point);
+					break;
+				}
 				}
 				info.framesLeft = numCollisionFrames;
 				allCollisions.insert(info);
@@ -233,6 +248,11 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Vector3 contactVelocity = fullVelocityB - fullVelocityA;
 
 	float impulseForce = Vector3::Dot(contactVelocity, p.normal);
+
+	if (impulseForce < 0)
+	{
+		return;
+	}
 	
 	// now to work out the effect of inertia ....
 	Vector3 inertiaA = Vector3::Cross(physA->GetInertiaTensor() * Vector3::Cross(relativeA, p.normal), relativeA);
@@ -261,6 +281,13 @@ void PhysicsSystem::ResolveSpringCollision(GameObject& a, GameObject& b, Collisi
 	
 	physA->AddForceAtRelativePosition(-direction * physA->GetBuoyancy(), p.localA);
 	physB->AddForceAtRelativePosition(direction * physB->GetBuoyancy(), p.localB);
+}
+
+void PhysicsSystem::ResolveTrampolineCollision(GameObject& a, GameObject& b, CollisionDetection::ContactPoint& p) const
+{
+	PhysicsObject* phys = a.GetPhysicsObject()->GetInverseMass() == 0 ? b.GetPhysicsObject() : a.GetPhysicsObject();
+
+	phys->AddForceAtRelativePosition(Vector3(0, 200, 0) * phys->GetBuoyancy(), p.localA);
 }
 
 /*

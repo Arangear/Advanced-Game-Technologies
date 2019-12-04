@@ -44,6 +44,10 @@ namespace NCL
 			GameWorld*			world;
 
 			float		forceMagnitude;
+			float sprint = 0.0f;
+			float sprintCD = 0.0f;
+
+			void ManageSprint(float dt);
 
 			OGLMesh*	cubeMesh	= nullptr;
 			OGLMesh*	sphereMesh	= nullptr;
