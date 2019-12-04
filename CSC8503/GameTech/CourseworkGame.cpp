@@ -417,8 +417,7 @@ void CourseworkGame::InitWorld()
 	AddFloorToWorld(Vector3(-440, 25, 240), Vector3(60, 5, 60), terrainColour);
 	AddFloorToWorld(Vector3(-460, 35, 260), Vector3(40, 5, 40), terrainColour);
 	//Trampoline
-	//TODO: implement
-	//AddTrampolineToWorld(Vector3(0, 0, 0));
+	AddTrampolineToWorld(Vector3(0, 5, 0));
 }
 
 //From here on it's functions to add in objects to the world!
@@ -473,6 +472,15 @@ GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector
 	world->AddGameObject(wall);
 
 	return wall;
+}
+
+void NCL::CSC8503::CourseworkGame::AddTrampolineToWorld(const Vector3& position)
+{
+	AddFloorToWorld(position, Vector3(50, 3, 50), Vector4(1, 0, 0, 1));
+	AddWallToWorld(position + Vector3(50, 0, 3), Vector3(3, 5, 50));
+	AddWallToWorld(position - Vector3(50, 0, 3), Vector3(3, 5, 50));
+	AddWallToWorld(position + Vector3(-3, 0, 50), Vector3(50, 5, 3));
+	AddWallToWorld(position - Vector3(-3, 0, 50), Vector3(50, 5, 3));
 }
 
 GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
