@@ -411,13 +411,14 @@ void CourseworkGame::InitWorld()
 	AddFloorToWorld(Vector3(420, 15, -220), Vector3(80, 5, 80), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(440, 25, -240), Vector3(60, 5, 60), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(460, 35, -260), Vector3(40, 5, 40), terrainColour, CollisionResolution::Impulse);
-
 	AddFloorToWorld(Vector3(-400, 5, 200), Vector3(100, 5, 100), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-420, 15, 220), Vector3(80, 5, 80), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-440, 25, 240), Vector3(60, 5, 60), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-460, 35, 260), Vector3(40, 5, 40), terrainColour, CollisionResolution::Impulse);
 	//Trampoline
 	AddTrampolineToWorld(Vector3(0, 5, 0));
+	//Goose
+	AddGooseToWorld(Vector3(200, 10, 0));
 }
 
 //From here on it's functions to add in objects to the world!
@@ -568,6 +569,9 @@ GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 
 	goose->GetPhysicsObject()->SetInverseMass(inverseMass);
 	goose->GetPhysicsObject()->InitSphereInertia();
+	goose->GetPhysicsObject()->SetBuoyancy(100);
+	goose->GetPhysicsObject()->SetElasticity(0.7f);
+	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring);
 
 	world->AddGameObject(goose);
 

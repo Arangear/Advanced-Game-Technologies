@@ -6,7 +6,8 @@ using namespace NCL::Maths;
 
 namespace NCL {
 
-	enum CollisionResolution {Impulse = 1, Spring = 2};
+	enum LayerID { Layer0 = 1, Layer1 = 2, Layer2 = 3 };
+	enum CollisionResolution { Impulse = 1, Spring = 2 };
 
 	class CollisionVolume;
 	
@@ -93,7 +94,7 @@ namespace NCL {
 				affectedByGravity = value;
 			}
 
-			void SetCollisionResolution(int value)
+			void SetCollisionResolution(const int value)
 			{
 				collisionResolution = value;
 			}

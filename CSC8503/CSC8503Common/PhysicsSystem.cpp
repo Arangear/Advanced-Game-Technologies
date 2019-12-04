@@ -179,11 +179,11 @@ void PhysicsSystem::BasicCollisionDetection()
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(*i, *j, info))
 			{
-				if (info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution() == CollisionResolution::Impulse)
+				if ((info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution()) == CollisionResolution::Impulse)
 				{
 					ImpulseResolveCollision(*info.a, *info.b, info.point);
 				}
-				else if (info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution() == CollisionResolution::Spring)
+				else if ((info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution()) == CollisionResolution::Spring)
 				{
 					ResolveSpringCollision(*info.a, *info.b, info.point);
 				}
@@ -210,6 +210,11 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 	Transform& transformB = b.GetTransform();
 	
 	float totalMass = physA->GetInverseMass() + physB->GetInverseMass();
+
+	if (totalMass == 0.0f)
+	{
+		return;
+	}
 	
 	// Separate them out using projection
 	transformA.SetWorldPosition(transformA.GetWorldPosition() - (p.normal * p.penetration * (physA->GetInverseMass() / totalMass)));
