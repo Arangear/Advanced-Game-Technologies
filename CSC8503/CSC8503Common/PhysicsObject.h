@@ -5,6 +5,9 @@
 using namespace NCL::Maths;
 
 namespace NCL {
+
+	enum CollisionResolution {Impulse = 1, Spring = 2};
+
 	class CollisionVolume;
 	
 	namespace CSC8503 {
@@ -90,6 +93,16 @@ namespace NCL {
 				affectedByGravity = value;
 			}
 
+			void SetCollisionResolution(int value)
+			{
+				collisionResolution = value;
+			}
+
+			int GetCollisionResolution() const
+			{
+				return collisionResolution;
+			}
+
 			void InitCubeInertia();
 			void InitSphereInertia();
 			void InitHollowSphereInertia();
@@ -109,6 +122,7 @@ namespace NCL {
 			float buoyancy;
 			float friction;
 			bool affectedByGravity;
+			int collisionResolution;
 
 			//linear stuff
 			Vector3 linearVelocity;

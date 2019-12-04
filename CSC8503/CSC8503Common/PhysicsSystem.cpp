@@ -179,8 +179,14 @@ void PhysicsSystem::BasicCollisionDetection()
 			CollisionDetection::CollisionInfo info;
 			if (CollisionDetection::ObjectIntersection(*i, *j, info))
 			{
-				//ImpulseResolveCollision(*info.a, *info.b, info.point);
-				ResolveSpringCollision(*info.a, *info.b, info.point);
+				if (info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution() == CollisionResolution::Impulse)
+				{
+					ImpulseResolveCollision(*info.a, *info.b, info.point);
+				}
+				else if (info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution() == CollisionResolution::Spring)
+				{
+					ResolveSpringCollision(*info.a, *info.b, info.point);
+				}
 				info.framesLeft = numCollisionFrames;
 				allCollisions.insert(info);
 			}

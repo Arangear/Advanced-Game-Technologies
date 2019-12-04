@@ -397,32 +397,32 @@ void CourseworkGame::InitWorld()
 	Vector4 islandColour(1, 1, 0, 1);
 	Vector4 terrainColour(0, 1, 0, 1);
 	//Cage
-	AddFloorToWorld(floorPosition, floorSize, floorColour);
+	AddFloorToWorld(floorPosition, floorSize, floorColour, CollisionResolution::Spring);
 	AddWallToWorld(floorPosition + Vector3(floorSize.x, floorSize.x, 0.0f), wallSizeZ);
 	AddWallToWorld(floorPosition - Vector3(floorSize.x, -floorSize.x, 0.0f), wallSizeZ);
 	AddWallToWorld(floorPosition + Vector3(0.0f, floorSize.z, floorSize.z), wallSizeX);
 	AddWallToWorld(floorPosition - Vector3(0.0f, -floorSize.z, floorSize.z), wallSizeX);
 	//Islands
-	AddFloorToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour);
-	AddFloorToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour);
+	AddFloorToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
+	AddFloorToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
 	//Terrain
-	AddFloorToWorld(Vector3(0, -2, 0), Vector3(500, 3, 300), terrainColour);
-	AddFloorToWorld(Vector3(400, 5, -200), Vector3(100, 5, 100), terrainColour);
-	AddFloorToWorld(Vector3(420, 15, -220), Vector3(80, 5, 80), terrainColour);
-	AddFloorToWorld(Vector3(440, 25, -240), Vector3(60, 5, 60), terrainColour);
-	AddFloorToWorld(Vector3(460, 35, -260), Vector3(40, 5, 40), terrainColour);
+	AddFloorToWorld(Vector3(0, -2, 0), Vector3(500, 3, 300), terrainColour, CollisionResolution::Impulse);
+	AddFloorToWorld(Vector3(400, 5, -200), Vector3(100, 5, 100), terrainColour, CollisionResolution::Impulse);
+	AddFloorToWorld(Vector3(420, 15, -220), Vector3(80, 5, 80), terrainColour, CollisionResolution::Impulse);
+	AddFloorToWorld(Vector3(440, 25, -240), Vector3(60, 5, 60), terrainColour, CollisionResolution::Impulse);
+	AddFloorToWorld(Vector3(460, 35, -260), Vector3(40, 5, 40), terrainColour, CollisionResolution::Impulse);
 
-	AddFloorToWorld(Vector3(-400, 5, 200), Vector3(100, 5, 100), terrainColour);
-	AddFloorToWorld(Vector3(-420, 15, 220), Vector3(80, 5, 80), terrainColour);
-	AddFloorToWorld(Vector3(-440, 25, 240), Vector3(60, 5, 60), terrainColour);
-	AddFloorToWorld(Vector3(-460, 35, 260), Vector3(40, 5, 40), terrainColour);
+	AddFloorToWorld(Vector3(-400, 5, 200), Vector3(100, 5, 100), terrainColour, CollisionResolution::Impulse);
+	AddFloorToWorld(Vector3(-420, 15, 220), Vector3(80, 5, 80), terrainColour, CollisionResolution::Impulse);
+	AddFloorToWorld(Vector3(-440, 25, 240), Vector3(60, 5, 60), terrainColour, CollisionResolution::Impulse);
+	AddFloorToWorld(Vector3(-460, 35, 260), Vector3(40, 5, 40), terrainColour, CollisionResolution::Impulse);
 	//Trampoline
 	AddTrampolineToWorld(Vector3(0, 5, 0));
 }
 
 //From here on it's functions to add in objects to the world!
 
-GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour)
+GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution)
 {
 	GameObject* floor = new GameObject();
 
@@ -436,6 +436,7 @@ GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vecto
 	floor->GetPhysicsObject()->SetElasticity(0.0f);
 	floor->GetPhysicsObject()->SetBuoyancy(0.0f);
 	floor->GetPhysicsObject()->SetGravityAffinity(false);
+	floor->GetPhysicsObject()->SetCollisionResolution(collisionResolution);
 
 	floor->GetPhysicsObject()->SetInverseMass(0);
 	floor->GetPhysicsObject()->InitCubeInertia();
@@ -462,6 +463,7 @@ GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector
 	wall->GetPhysicsObject()->SetElasticity(0.0f);
 	wall->GetPhysicsObject()->SetBuoyancy(0.0f);
 	wall->GetPhysicsObject()->SetGravityAffinity(false);
+	wall->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse);
 
 	wall->GetPhysicsObject()->SetInverseMass(0);
 	wall->GetPhysicsObject()->InitCubeInertia();
@@ -476,7 +478,7 @@ GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector
 
 void NCL::CSC8503::CourseworkGame::AddTrampolineToWorld(const Vector3& position)
 {
-	AddFloorToWorld(position, Vector3(50, 3, 50), Vector4(1, 0, 0, 1));
+	AddFloorToWorld(position, Vector3(50, 3, 50), Vector4(1, 0, 0, 1), CollisionResolution::Spring);
 	AddWallToWorld(position + Vector3(50, 0, 3), Vector3(3, 5, 50));
 	AddWallToWorld(position - Vector3(50, 0, 3), Vector3(3, 5, 50));
 	AddWallToWorld(position + Vector3(-3, 0, 50), Vector3(50, 5, 3));
