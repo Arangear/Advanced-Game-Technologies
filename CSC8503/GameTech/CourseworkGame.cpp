@@ -144,7 +144,7 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 	}
 	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::SPACE))
 	{
-		playerCharacter->GetPhysicsObject()->AddForce(Vector3(0, 1, 0) * forceMagnitude);
+		playerCharacter->GetPhysicsObject()->AddForce(Vector3(0, 2, 0) * forceMagnitude);
 	}
 }
 
@@ -344,7 +344,7 @@ GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 
 	goose->GetPhysicsObject()->SetInverseMass(inverseMass);
 	goose->GetPhysicsObject()->InitSphereInertia();
-	goose->GetPhysicsObject()->SetBuoyancy(150);
+	goose->GetPhysicsObject()->SetBuoyancy(130);
 	goose->GetPhysicsObject()->SetElasticity(0.7f);
 	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring);
 
