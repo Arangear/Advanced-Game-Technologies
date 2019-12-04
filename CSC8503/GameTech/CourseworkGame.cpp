@@ -328,7 +328,7 @@ GameObject* CourseworkGame::AddCubeToWorld(const Vector3& position, Vector3 dime
 GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 {
 	float size			= 1.0f;
-	float inverseMass	= 0.5f;
+	float inverseMass	= 0.25f;
 
 	GameObject* goose = new GameObject();
 
@@ -344,10 +344,9 @@ GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 
 	goose->GetPhysicsObject()->SetInverseMass(inverseMass);
 	goose->GetPhysicsObject()->InitSphereInertia();
-	goose->GetPhysicsObject()->SetBuoyancy(100);
+	goose->GetPhysicsObject()->SetBuoyancy(150);
 	goose->GetPhysicsObject()->SetElasticity(0.7f);
 	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring);
-	goose->GetPhysicsObject()->SetGravityAffinity(true);
 
 	world->AddGameObject(goose);
 
