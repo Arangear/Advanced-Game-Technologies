@@ -19,15 +19,12 @@ namespace NCL
 			void InitialiseAssets();
 
 			void InitCamera();
-			void UpdateKeys();
+			void UpdateKeys(float dt);
 
 			void InitWorld();
 
-			bool SelectObject();
-			void MoveSelectedObject();
-			void DebugObjectMovement();
-			void LockedObjectMovement();
-			void LockedCameraMovement();
+			void MovePlayerCharacter(float dt);
+			void CameraMovement();
 
 			GameObject* AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution);
 			GameObject* AddWallToWorld(const Vector3& position, const Vector3& scale);
@@ -46,13 +43,7 @@ namespace NCL
 			PhysicsSystem*		physics;
 			GameWorld*			world;
 
-			bool useGravity;
-			bool inSelectionMode;
-
 			float		forceMagnitude;
-
-			GameObject* selectionObject = nullptr;
-			GameObject* targetObject = nullptr;
 
 			OGLMesh*	cubeMesh	= nullptr;
 			OGLMesh*	sphereMesh	= nullptr;
@@ -66,13 +57,9 @@ namespace NCL
 			OGLMesh*	charA		= nullptr;
 			OGLMesh*	charB		= nullptr;
 
-			//Coursework Additional functionality	
-			GameObject* lockedObject	= nullptr;
-			Vector3 lockedOffset		= Vector3(0, 14, 20);
-			void LockCameraToObject(GameObject* o)
-			{
-				lockedObject = o;
-			}
+			//Camera and gameplay stuff
+			GameObject* playerCharacter	= nullptr;
+			Vector3 lockedOffset		= Vector3(0, 5, -20);
 		};
 	}
 }
