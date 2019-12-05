@@ -287,7 +287,7 @@ void PhysicsSystem::ResolveTrampolineCollision(GameObject& a, GameObject& b, Col
 {
 	PhysicsObject* phys = a.GetPhysicsObject()->GetInverseMass() == 0 ? b.GetPhysicsObject() : a.GetPhysicsObject();
 
-	phys->AddForceAtRelativePosition(Vector3(0, 200, 0) * phys->GetBuoyancy(), p.localA);
+	phys->AddForceAtRelativePosition(Vector3(0, 300, 0) * phys->GetBuoyancy(), p.localA);
 }
 
 /*

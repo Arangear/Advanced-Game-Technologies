@@ -170,6 +170,7 @@ void CourseworkGame::InitCamera()
 
 void CourseworkGame::InitWorld()
 {
+	//Scale the world down at least 2 times
 	world->ClearAndErase();
 	physics->Clear();
 
@@ -205,6 +206,26 @@ void CourseworkGame::InitWorld()
 	AddTrampolineToWorld(Vector3(0, 5, 0));
 	//Goose
 	playerCharacter = AddGooseToWorld(Vector3(425, 5, 425));
+	//Apples
+	AddAppleToWorld(Vector3(0, 30, 0));
+	AddAppleToWorld(Vector3(-40, 30, -40));
+	AddAppleToWorld(Vector3(-40, 30, 40));
+	AddAppleToWorld(Vector3(40, 30, -40));
+	AddAppleToWorld(Vector3(40, 30, 40));
+	AddAppleToWorld(Vector3(460, 45, -260));
+	AddAppleToWorld(Vector3(480, 45, -280));
+	AddAppleToWorld(Vector3(480, 45, -240));
+	AddAppleToWorld(Vector3(440, 45, -280));
+	AddAppleToWorld(Vector3(440, 45, -240));
+	AddAppleToWorld(Vector3(-460, 45, 260));
+	AddAppleToWorld(Vector3(-480, 45, 280));
+	AddAppleToWorld(Vector3(-480, 45, 240));
+	AddAppleToWorld(Vector3(-440, 45, 280));
+	AddAppleToWorld(Vector3(-440, 45, 240));
+	//Obstacles
+	//TODO: Add some AABBs
+	//Other collectibles
+	//TODO: Add some spheres
 }
 
 //From here on it's functions to add in objects to the world!
