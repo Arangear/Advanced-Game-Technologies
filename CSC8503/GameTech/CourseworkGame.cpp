@@ -148,7 +148,7 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 	{
 		playerCharacter->GetPhysicsObject()->AddForce(Vector3(0, 2, 0) * forceMagnitude);
 	}
-	if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::SHIFT))
+	if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::Q))
 	{
 		if (sprintCD <= 0)
 		{
@@ -156,6 +156,10 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 			sprintCD = 5.0f;
 			forceMagnitude *= 2;
 		}
+	}
+	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::SHIFT))
+	{
+		playerCharacter->GetPhysicsObject()->AddForce(Vector3(0, -2, 0) * forceMagnitude);
 	}
 }
 
@@ -223,9 +227,16 @@ void CourseworkGame::InitWorld()
 	AddAppleToWorld(Vector3(-440, 45, 280));
 	AddAppleToWorld(Vector3(-440, 45, 240));
 	//Obstacles
-	//TODO: Add some AABBs
+	for (int i = -3; i <= 3; i++)
+	{
+		for (int j = -3; j <= 3; j++)
+		{
+			AddCubeToWorld(Vector3(60 * i, 20, 60 * j), Vector3(rand() % 3 + 1, rand() % 3 + 1, rand() % 3 + 1), rand() % 10 * 0.1f);
+		}
+	}
 	//Other collectibles
-	//TODO: Add some spheres
+	AddSphereToWorld(Vector3(270, 4, 190), 1, 1);
+	AddSphereToWorld(Vector3(-270, 4, -190), 1, 1);
 }
 
 //From here on it's functions to add in objects to the world!
@@ -307,27 +318,15 @@ GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radi
 
 	sphere->GetPhysicsObject()->SetInverseMass(inverseMass);
 
-	if (rand() % 2)
-	{
-		sphere->GetPhysicsObject()->InitSphereInertia();
-		sphere->GetPhysicsObject()->SetElasticity(0.1f);
-		sphere->GetPhysicsObject()->SetBuoyancy(100.0f);
-		sphere->GetPhysicsObject()->SetGravityAffinity(false);
-		//Just to see which ones are full
-		Vector4 colour = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
-		sphere->GetRenderObject()->SetColour(colour);
-		sphere->GetRenderObject()->SetOriginalColour(colour);
-	}
-	else
-	{
-		sphere->GetPhysicsObject()->InitHollowSphereInertia();
-		sphere->GetPhysicsObject()->SetElasticity(0.9f);
-		sphere->GetPhysicsObject()->SetBuoyancy(1000.0f);
-		//Just to see which ones are hollow
-		Vector4 colour = Vector4(1.0f, 0.0f, 1.0f, 1.0f);
-		sphere->GetRenderObject()->SetColour(colour);
-		sphere->GetRenderObject()->SetOriginalColour(colour);
-	}
+	sphere->GetPhysicsObject()->InitSphereInertia();
+	sphere->GetPhysicsObject()->SetElasticity(0.9f);
+	sphere->GetPhysicsObject()->SetBuoyancy(100.0f);
+	sphere->GetPhysicsObject()->SetGravityAffinity(false);
+	sphere->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Collect);
+
+	Vector4 colour = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
+	sphere->GetRenderObject()->SetColour(colour);
+	sphere->GetRenderObject()->SetOriginalColour(colour);
 
 	world->AddGameObject(sphere);
 
@@ -346,8 +345,9 @@ GameObject* CourseworkGame::AddCubeToWorld(const Vector3& position, Vector3 dime
 
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
-	cube->GetPhysicsObject()->SetElasticity(0.5f);
-	cube->GetPhysicsObject()->SetBuoyancy(50.0f);
+	cube->GetPhysicsObject()->SetElasticity(rand() % 100 + 1 / 100.f);
+	cube->GetPhysicsObject()->SetBuoyancy(rand() % 351 + 50);
+	cube->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline);
 
 	cube->GetPhysicsObject()->SetInverseMass(inverseMass);
 	cube->GetPhysicsObject()->InitCubeInertia();
@@ -470,7 +470,7 @@ GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
 	return apple;
 }
 
-void NCL::CSC8503::CourseworkGame::ManageSprint(float dt)
+void CourseworkGame::ManageSprint(float dt)
 {
 	if (sprint <= 0.0)
 	{

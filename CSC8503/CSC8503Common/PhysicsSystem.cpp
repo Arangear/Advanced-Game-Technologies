@@ -201,6 +201,11 @@ void PhysicsSystem::BasicCollisionDetection()
 					ResolveTrampolineCollision(*info.a, *info.b, info.point);
 					break;
 				}
+				case CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline:
+				{
+					ImpulseResolveCollision(*info.a, *info.b, info.point);
+					break;
+				}
 				}
 				info.framesLeft = numCollisionFrames;
 				allCollisions.insert(info);
