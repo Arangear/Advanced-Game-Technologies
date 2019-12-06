@@ -4,6 +4,7 @@
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
 #include "../../Plugins/OpenGLRendering/OGLTexture.h"
 #include "../../Common/TextureLoader.h"
+#include "../../CSC8503/CSC8503Common/PickableObject.h"
 
 #include "../CSC8503Common/PositionConstraint.h"
 
@@ -62,6 +63,7 @@ CourseworkGame::~CourseworkGame()
 
 void CourseworkGame::UpdateGame(float dt)
 {
+	playerCharacter->UpdatePositions();
 	ManageSprint(dt);
 
 	CameraMovement();
@@ -237,8 +239,8 @@ void CourseworkGame::InitWorld()
 		}
 	}
 	//Other collectibles
-	AddSphereToWorld(Vector3(270, 4, 190), 1, 1);
-	AddSphereToWorld(Vector3(-270, 4, -190), 1, 1);
+	AddSphereToWorld(Vector3(135, 2, 95), 1, 1);
+	AddSphereToWorld(Vector3(-135, 2, -95), 1, 1);
 }
 
 //From here on it's functions to add in objects to the world!
@@ -307,7 +309,7 @@ void CourseworkGame::AddTrampolineToWorld(const Vector3& position)
 }
 
 GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
-	GameObject* sphere = new GameObject();
+	PickableObject* sphere = new PickableObject();
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
 	SphereVolume* volume = new SphereVolume(radius);
@@ -359,12 +361,12 @@ GameObject* CourseworkGame::AddCubeToWorld(const Vector3& position, Vector3 dime
 	return cube;
 }
 
-GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
+GooseObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 {
 	float size			= 1.0f;
 	float inverseMass	= 0.25f;
 
-	GameObject* goose = new GameObject();
+	GooseObject* goose = new GooseObject();
 
 	SphereVolume* volume = new SphereVolume(size);
 	goose->SetBoundingVolume((CollisionVolume*)volume);
@@ -379,7 +381,7 @@ GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 	goose->GetPhysicsObject()->InitSphereInertia();
 	goose->GetPhysicsObject()->SetBuoyancy(140);
 	goose->GetPhysicsObject()->SetElasticity(0.7f);
-	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline);
+	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline | CollisionResolution::Collect);
 
 	world->AddGameObject(goose);
 
@@ -447,7 +449,7 @@ GameObject* CourseworkGame::AddCharacterToWorld(const Vector3& position) {
 }
 
 GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
-	GameObject* apple = new GameObject();
+	PickableObject* apple = new PickableObject();
 
 	SphereVolume* volume = new SphereVolume(0.7f);
 	apple->SetBoundingVolume((CollisionVolume*)volume);

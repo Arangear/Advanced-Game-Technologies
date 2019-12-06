@@ -73,7 +73,8 @@ namespace NCL {
 				layer = _layer;
 			}
 
-			virtual void OnCollisionBegin(GameObject* otherObject) {
+			virtual void OnCollisionBegin(GameObject* otherObject)
+			{
 				//std::cout << "OnCollisionBegin event occured!\n";
 			}
 
@@ -84,6 +85,8 @@ namespace NCL {
 			bool GetBroadphaseAABB(Vector3&outsize) const;
 
 			void UpdateBroadphaseAABB();
+
+			void UpdateObjectPosition(const int id, Vector3 ownerPosition);
 
 		protected:
 			Transform			transform;

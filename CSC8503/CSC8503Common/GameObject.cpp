@@ -47,3 +47,8 @@ void GameObject::UpdateBroadphaseAABB() {
 		broadphaseAABB = mat * halfSizes;
 	}
 }
+
+void GameObject::UpdateObjectPosition(const int id, Vector3 ownerPosition)
+{
+	this->GetTransform().SetWorldPosition(ownerPosition + Vector3(0, 2 * (id + 1), 0));
+}

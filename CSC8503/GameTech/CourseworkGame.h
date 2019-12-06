@@ -1,6 +1,7 @@
 #pragma once
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
+#include "../../CSC8503/CSC8503Common/GooseObject.h"
 
 
 namespace NCL
@@ -33,7 +34,7 @@ namespace NCL
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
 			GameObject* AddCubeToWorld(const Vector3& position, Vector3 dimensions, float inverseMass = 10.0f);
 			//IT'S HAPPENING
-			GameObject* AddGooseToWorld(const Vector3& position);
+			GooseObject* AddGooseToWorld(const Vector3& position);
 			GameObject* AddParkKeeperToWorld(const Vector3& position);
 			GameObject* AddCharacterToWorld(const Vector3& position);
 			GameObject* AddAppleToWorld(const Vector3& position);
@@ -62,7 +63,7 @@ namespace NCL
 			OGLMesh*	charB		= nullptr;
 
 			//Camera and gameplay stuff
-			GameObject* playerCharacter	= nullptr;
+			GooseObject* playerCharacter	= nullptr;
 			Vector3 lockedOffset		= Vector3(0, 5, -20);
 		};
 	}
