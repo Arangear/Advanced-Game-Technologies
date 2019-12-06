@@ -15,24 +15,6 @@
 using namespace NCL;
 using namespace CSC8503;
 
-void TestStateMachine() {
-}
-
-void TestNetworking() {
-}
-
-vector<Vector3> testNodes;
-
-void TestPathfinding() {
-
-}
-
-void DisplayPathfinding() {
-
-}
-
-
-
 /*
 
 The main function should look pretty familar to you!
@@ -46,15 +28,11 @@ hide or show the
 
 */
 int main() {
-	Window*w = Window::CreateGameWindow("CSC8503 Game technology!", 1280, 720);
+	Window*w = Window::CreateGameWindow("CSC8503 Advanced Game Technologies", 1280, 720);
 
 	if (!w->HasInitialised()) {
 		return -1;
 	}	
-
-	//TestStateMachine();
-	//TestNetworking();
-	//TestPathfinding();
 	
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
@@ -75,9 +53,7 @@ int main() {
 			w->ShowConsole(false);
 		}
 
-		DisplayPathfinding();
-
-		w->SetTitle("Gametech frame time:" + std::to_string(1000.0f * dt));
+		w->SetTitle("FPS:" + std::to_string(1.0f / dt));
 
 		g->UpdateGame(dt);
 	}

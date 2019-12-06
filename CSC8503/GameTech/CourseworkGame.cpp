@@ -179,8 +179,8 @@ void CourseworkGame::InitWorld()
 	physics->Clear();
 
 	//Setup
-	Vector3 floorPosition(0, -2, 0);
-	Vector3 floorSize(250, 2, 250);
+	Vector3 floorPosition(0, -10, 0);
+	Vector3 floorSize(250, 10, 250);
 	Vector3 wallSizeX(250, 250, 2);
 	Vector3 wallSizeZ(2, 250, 250);
 	Vector3 islandSize(25, 2, 25);
@@ -189,6 +189,7 @@ void CourseworkGame::InitWorld()
 	Vector4 terrainColour(0, 1, 0, 1);
 	//Cage
 	AddFloorToWorld(floorPosition, floorSize, floorColour, CollisionResolution::Spring);
+	AddFloorToWorld(floorPosition, floorSize - Vector3(0, 2, 0), floorColour, CollisionResolution::Impulse);
 	AddWallToWorld(floorPosition + Vector3(floorSize.x, floorSize.x, 0.0f), wallSizeZ);
 	AddWallToWorld(floorPosition - Vector3(floorSize.x, -floorSize.x, 0.0f), wallSizeZ);
 	AddWallToWorld(floorPosition + Vector3(0.0f, floorSize.z, floorSize.z), wallSizeX);
@@ -227,6 +228,7 @@ void CourseworkGame::InitWorld()
 	AddAppleToWorld(Vector3(-220, 22.5, 140));
 	AddAppleToWorld(Vector3(-220, 22.5, 120));
 	//Obstacles
+	rand();//manipulating the generation :)
 	for (int i = -3; i <= 3; i++)
 	{
 		for (int j = -3; j <= 3; j++)
@@ -375,7 +377,7 @@ GameObject* CourseworkGame::AddGooseToWorld(const Vector3& position)
 
 	goose->GetPhysicsObject()->SetInverseMass(inverseMass);
 	goose->GetPhysicsObject()->InitSphereInertia();
-	goose->GetPhysicsObject()->SetBuoyancy(130);
+	goose->GetPhysicsObject()->SetBuoyancy(140);
 	goose->GetPhysicsObject()->SetElasticity(0.7f);
 	goose->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline);
 
