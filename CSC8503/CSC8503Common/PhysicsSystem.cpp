@@ -193,7 +193,6 @@ void PhysicsSystem::BasicCollisionDetection()
 				}
 				case CollisionResolution::Collect:
 				{
-					//TODO: implement
 					break;
 				}
 				case CollisionResolution::Trampoline:
@@ -254,7 +253,7 @@ void PhysicsSystem::ImpulseResolveCollision(GameObject& a, GameObject& b, Collis
 
 	float impulseForce = Vector3::Dot(contactVelocity, p.normal);
 
-	if (impulseForce < 0)
+	if (impulseForce > 0)
 	{
 		return;
 	}

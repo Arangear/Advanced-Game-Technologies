@@ -52,3 +52,10 @@ void GameObject::UpdateObjectPosition(const int id, Vector3 ownerPosition)
 {
 	this->GetTransform().SetWorldPosition(ownerPosition + Vector3(0, 2 * (id + 1), 0));
 }
+
+void GameObject::UpdateIslandPosition(const int id, Vector3 ownerPosition)
+{
+	const int x = id % 5 - 2;
+	const int y = id / 5 - 2;
+	this->GetTransform().SetWorldPosition(ownerPosition + Vector3(x * 4, 3, y * 4));
+}

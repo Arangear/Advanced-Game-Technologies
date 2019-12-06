@@ -17,6 +17,10 @@ public:
 
 	void UpdatePositions();
 
+	vector<GameObject*>& GetItems()
+	{
+		return pickedUpItems;
+	}
 protected:
 	vector<GameObject*> pickedUpItems;
 };

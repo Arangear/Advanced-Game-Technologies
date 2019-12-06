@@ -2,6 +2,7 @@
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "../../CSC8503/CSC8503Common/GooseObject.h"
+#include "../../CSC8503/CSC8503Common/GooselandObject.h"
 
 
 namespace NCL
@@ -28,6 +29,7 @@ namespace NCL
 			void CameraMovement();
 
 			GameObject* AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution);
+			GameObject* AddIslandToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution);
 			GameObject* AddWallToWorld(const Vector3& position, const Vector3& scale);
 			void AddTrampolineToWorld(const Vector3& position);
 

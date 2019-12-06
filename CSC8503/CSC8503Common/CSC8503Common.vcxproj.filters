@@ -129,6 +129,9 @@
     <ClInclude Include="PickableObject.h">
       <Filter>Other</Filter>
     </ClInclude>
+    <ClInclude Include="GooselandObject.h">
+      <Filter>Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionDetection.cpp">
@@ -210,6 +213,9 @@
       <Filter>Other</Filter>
     </ClCompile>
     <ClCompile Include="PickableObject.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="GooselandObject.cpp">
       <Filter>Other</Filter>
     </ClCompile>
   </ItemGroup>

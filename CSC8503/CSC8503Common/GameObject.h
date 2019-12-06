@@ -87,6 +87,7 @@ namespace NCL {
 			void UpdateBroadphaseAABB();
 
 			void UpdateObjectPosition(const int id, Vector3 ownerPosition);
+			void UpdateIslandPosition(const int id, Vector3 ownerPosition);
 
 		protected:
 			Transform			transform;

@@ -189,6 +189,8 @@ void CourseworkGame::InitWorld()
 	Vector4 floorColour(0, 0, 1, 1);
 	Vector4 islandColour(1, 1, 0, 1);
 	Vector4 terrainColour(0, 1, 0, 1);
+	//Goose
+	playerCharacter = AddGooseToWorld(Vector3(212.5, 4, 212.5));
 	//Cage
 	AddFloorToWorld(floorPosition, floorSize, floorColour, CollisionResolution::Spring);
 	AddFloorToWorld(floorPosition, floorSize - Vector3(0, 2, 0), floorColour, CollisionResolution::Impulse);
@@ -197,8 +199,8 @@ void CourseworkGame::InitWorld()
 	AddWallToWorld(floorPosition + Vector3(0.0f, floorSize.z, floorSize.z), wallSizeX);
 	AddWallToWorld(floorPosition - Vector3(0.0f, -floorSize.z, floorSize.z), wallSizeX);
 	//Islands
-	AddFloorToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
-	AddFloorToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
+	AddIslandToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
+	AddIslandToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
 	//Terrain
 	AddFloorToWorld(Vector3(0, -1, 0), Vector3(250, 1.5, 150), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(200, 2.5, -100), Vector3(50, 2.5, 50), terrainColour, CollisionResolution::Impulse);
@@ -211,8 +213,6 @@ void CourseworkGame::InitWorld()
 	AddFloorToWorld(Vector3(-230, 17.5, 130), Vector3(20, 2.5, 20), terrainColour, CollisionResolution::Impulse);
 	//Trampoline
 	AddTrampolineToWorld(Vector3(0, 2.5, 0));
-	//Goose
-	playerCharacter = AddGooseToWorld(Vector3(212.5, 4, 212.5));
 	//Apples
 	AddAppleToWorld(Vector3(0, 30, 0));
 	AddAppleToWorld(Vector3(-20, 30, -20));
@@ -270,6 +270,34 @@ GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vecto
 	world->AddGameObject(floor);
 
 	return floor;
+}
+
+GameObject* CourseworkGame::AddIslandToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution)
+{
+	GooselandObject* island = new GooselandObject();
+
+	AABBVolume* volume = new AABBVolume(scale);
+	island->SetBoundingVolume((CollisionVolume*)volume);
+	island->GetTransform().SetWorldScale(scale);
+	island->GetTransform().SetWorldPosition(position);
+
+	island->SetRenderObject(new RenderObject(&island->GetTransform(), cubeMesh, basicTex, basicShader));
+	island->SetPhysicsObject(new PhysicsObject(&island->GetTransform(), island->GetBoundingVolume()));
+	island->GetPhysicsObject()->SetElasticity(0.0f);
+	island->GetPhysicsObject()->SetBuoyancy(0.0f);
+	island->GetPhysicsObject()->SetGravityAffinity(false);
+	island->GetPhysicsObject()->SetCollisionResolution(collisionResolution);
+
+	island->GetPhysicsObject()->SetInverseMass(0);
+	island->GetPhysicsObject()->InitCubeInertia();
+	island->SetOwner(playerCharacter);
+
+	island->GetRenderObject()->SetColour(colour);
+	island->GetRenderObject()->SetOriginalColour(colour);
+
+	world->AddGameObject(island);
+
+	return island;
 }
 
 GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector3& scale)
@@ -349,7 +377,7 @@ GameObject* CourseworkGame::AddCubeToWorld(const Vector3& position, Vector3 dime
 
 	cube->SetRenderObject(new RenderObject(&cube->GetTransform(), cubeMesh, basicTex, basicShader));
 	cube->SetPhysicsObject(new PhysicsObject(&cube->GetTransform(), cube->GetBoundingVolume()));
-	cube->GetPhysicsObject()->SetElasticity(rand() % 100 + 1 / 100.f);
+	cube->GetPhysicsObject()->SetElasticity((rand() % 100 + 1) / 100.f);
 	cube->GetPhysicsObject()->SetBuoyancy(rand() % 351 + 50);
 	cube->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline);
 
