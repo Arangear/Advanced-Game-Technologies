@@ -8,7 +8,7 @@ using namespace CSC8503;
 class PickableObject : public GameObject
 {
 public:
-	PickableObject() : GameObject() {}
+	PickableObject(unsigned int pointsValue) : GameObject(), pointsValue(pointsValue) {}
 	virtual ~PickableObject() {}
 
 	void OnCollisionBegin(GameObject* otherObject);
@@ -33,7 +33,24 @@ public:
 		id = value;
 	}
 
+	const unsigned int GetPointsValue() const
+	{
+		return pointsValue;
+	}
+
+	void SetAssigned(const bool value)
+	{
+		assigned = value;
+	}
+
+	bool GetAssigned() const
+	{
+		return assigned;
+	}
+
 protected:
+	const unsigned int pointsValue;
 	GameObject* owner = nullptr;
-	int id;
+	int id = -1;
+	bool assigned = false;
 };

@@ -25,6 +25,8 @@ namespace NCL
 
 			void InitWorld();
 
+			void EndGame(float dt);
+
 			void MovePlayerCharacter(float dt);
 			void CameraMovement();
 
@@ -49,6 +51,9 @@ namespace NCL
 			float		forceMagnitude;
 			float sprint = 0.0f;
 			float sprintCD = 0.0f;
+
+			std::set<PickableObject*> pickables;
+			float timer = 180.0f;
 
 			void ManageSprint(float dt);
 

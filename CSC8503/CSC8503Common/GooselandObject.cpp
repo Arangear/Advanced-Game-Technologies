@@ -13,6 +13,8 @@ void GooselandObject::OnCollisionBegin(GameObject* otherObject)
 			items.push_back(object);
 			((PickableObject*)object)->SetID(items.size() - 1);
 			object->UpdateIslandPosition(items.size() - 1, GetConstTransform().GetWorldPosition());
+			((PickableObject*)object)->SetAssigned(true);
+			((GooseObject*)otherObject)->AddPoints(((PickableObject*)object)->GetPointsValue());
 		}
 		((GooseObject*)otherObject)->GetItems().clear();
 	}

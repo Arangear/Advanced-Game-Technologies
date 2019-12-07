@@ -63,6 +63,8 @@ CourseworkGame::~CourseworkGame()
 
 void CourseworkGame::UpdateGame(float dt)
 {
+	EndGame(dt);
+
 	playerCharacter->UpdatePositions();
 	ManageSprint(dt);
 
@@ -243,6 +245,31 @@ void CourseworkGame::InitWorld()
 	AddSphereToWorld(Vector3(-135, 2, -95), 1, 1);
 }
 
+void CourseworkGame::EndGame(float dt)
+{
+	std::set<PickableObject*> toRemove;
+	//Find objects to remove in this frame
+	for (PickableObject* object : pickables)
+	{
+		if (object->GetAssigned())
+		{
+			toRemove.insert(object);
+		}
+	}
+	//Remove the objects from the set
+	for (PickableObject* object : toRemove)
+	{
+		pickables.erase(object);
+	}
+	if (pickables.size() == 0 || timer <= 0)//All objects placed on islands or 3 minutes have passed
+	{
+		//TODO: do something more interesting
+		exit(0);
+	}
+
+	timer -= dt;
+}
+
 //From here on it's functions to add in objects to the world!
 
 GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution)
@@ -337,7 +364,7 @@ void CourseworkGame::AddTrampolineToWorld(const Vector3& position)
 }
 
 GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
-	PickableObject* sphere = new PickableObject();
+	PickableObject* sphere = new PickableObject(5);
 
 	Vector3 sphereSize = Vector3(radius, radius, radius);
 	SphereVolume* volume = new SphereVolume(radius);
@@ -361,6 +388,7 @@ GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radi
 	sphere->GetRenderObject()->SetOriginalColour(colour);
 
 	world->AddGameObject(sphere);
+	pickables.insert(sphere);
 
 	return sphere;
 }
@@ -477,7 +505,7 @@ GameObject* CourseworkGame::AddCharacterToWorld(const Vector3& position) {
 }
 
 GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
-	PickableObject* apple = new PickableObject();
+	PickableObject* apple = new PickableObject(1);
 
 	SphereVolume* volume = new SphereVolume(0.7f);
 	apple->SetBoundingVolume((CollisionVolume*)volume);
@@ -498,6 +526,7 @@ GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
 	apple->GetRenderObject()->SetOriginalColour(Vector4(1, 0, 0, 1));
 
 	world->AddGameObject(apple);
+	pickables.insert(apple);
 
 	return apple;
 }

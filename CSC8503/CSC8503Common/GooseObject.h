@@ -17,10 +17,21 @@ public:
 
 	void UpdatePositions();
 
+	void AddPoints(const unsigned int value)
+	{
+		points += value;
+	}
+
+	unsigned int GetPoints() const
+	{
+		return points;
+	}
+
 	vector<GameObject*>& GetItems()
 	{
 		return pickedUpItems;
 	}
 protected:
 	vector<GameObject*> pickedUpItems;
+	unsigned int points = 0;
 };
