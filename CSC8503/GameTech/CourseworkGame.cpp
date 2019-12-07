@@ -232,12 +232,18 @@ void CourseworkGame::InitWorld()
 	AddAppleToWorld(Vector3(-220, 22.5, 140));
 	AddAppleToWorld(Vector3(-220, 22.5, 120));
 	//Obstacles
-	rand();//manipulating the generation :)
 	for (int i = -3; i <= 3; i++)
 	{
 		for (int j = -3; j <= 3; j++)
 		{
-			AddCubeToWorld(Vector3(60 * i, 20, 60 * j), Vector3(rand() % 3 + 1, rand() % 3 + 1, rand() % 3 + 1), rand() % 10 * 0.1f);
+			if (i == 0 && j == 0)
+			{
+				AddCubeToWorld(Vector3(0, 20, 0), Vector3(3, 3, 3), 0.14f);
+			}
+			else
+			{
+				AddCubeToWorld(Vector3(60 * i, 20, 60 * j), Vector3(rand() % 3 + 1, rand() % 3 + 1, rand() % 3 + 1), rand() % 10 * 0.1f);
+			}
 		}
 	}
 	//Other collectibles
