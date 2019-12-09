@@ -15,34 +15,19 @@
 using namespace NCL;
 using namespace CSC8503;
 
-vector<Vector3> testNodes;
-
-void TestPathfinding()
+void DisplayGrid()
 {
 	NavigationGrid grid("2DMap.txt");
-	
-	NavigationPath outPath;
-	
-	Vector3 startPos(80, 0, 10);
-	Vector3 endPos(80, 0, 80);
-	
-	bool found = grid.FindPath(startPos, endPos, outPath);
-	
-	Vector3 pos;
-	while (outPath.PopWaypoint(pos))
-	{
-		testNodes.push_back(pos);
-	}
-}
 
-void DisplayPathfinding()
-{
-	for (int i = 1; i < testNodes.size(); ++i)
+	for (int i = 0; i < grid.GetNodeCount(); i++)
 	{
-		Vector3 a = testNodes[i - 1];
-		Vector3 b = testNodes[i];
-
-		Debug::DrawLine(a+ Vector3(0,15,0), b + Vector3(0, 15, 0), Vector4(1, 1, 0, 1));
+		for (int j = 0; j < 4; j++)
+		{
+			if (grid.GetNodes()[i].connected[j])
+			{
+				Debug::DrawLine(grid.GetNodes()[i].position + Vector3(0,5,0), grid.GetNodes()[i].connected[j]->position + Vector3(0, 5, 0), Vector4(1, 0, 0, 1));
+			}
+		}
 	}
 }
 
@@ -62,36 +47,41 @@ int main()
 {
 	Window*w = Window::CreateGameWindow("CSC8503 Advanced Game Technologies", 1280, 720);
 
-	if (!w->HasInitialised()) {
+	if (!w->HasInitialised())
+	{
 		return -1;
-	}	
-
-	TestPathfinding();
+	}
 	
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
 	CourseworkGame* g = new CourseworkGame();
 
-	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
+	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE))
+	{
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 
 		if (dt > 1.0f) {
 			std::cout << "Skipping large time delta" << std::endl;
 			continue; //must have hit a breakpoint or something to have a 1 second frame time!
 		}
-		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR))
+		{
 			w->ShowConsole(true);
 		}
-		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT)) {
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT))
+		{
 			w->ShowConsole(false);
 		}
+
+		//DisplayPathfinding();
+		//DisplayGrid();
 
 		w->SetTitle("FPS:" + std::to_string(1.0f / dt));
 
 		g->UpdateGame(dt);
 
-		DisplayPathfinding();
+		Debug::FlushRenderables();
 	}
 	Window::DestroyGameWindow();
 }

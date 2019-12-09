@@ -36,7 +36,8 @@ NavigationGrid::NavigationGrid(const std::string&filename) : NavigationGrid() {
 			char type = 0;
 			infile >> type;
 			n.type = type;
-			n.position = Vector3((float)(x * gridWidth), 0, (float)(y * gridHeight));
+
+			n.position = Vector3((float)((x - gridWidth / 2) * nodeSize), 0, (float)((y - gridHeight / 2) * nodeSize));
 		}
 	}
 	
@@ -79,11 +80,11 @@ NavigationGrid::~NavigationGrid()
 bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, NavigationPath& outPath)
 {
 	//need to work out which node ’from’ sits in , and ’to’ sits in
-	int fromX = (from.x / nodeSize);
-	int fromZ = (from.z / nodeSize);
+	int fromX = (from.x / nodeSize) + gridWidth / 2;
+	int fromZ = (from.z / nodeSize) + gridHeight / 2;
 	
-	int toX = (to.x / nodeSize);
-	int toZ = (to.z / nodeSize);
+	int toX = (to.x / nodeSize) + gridWidth / 2;
+	int toZ = (to.z / nodeSize) + gridHeight / 2;
 	
 	if (fromX < 0 || fromX > gridWidth - 1 || fromZ < 0 || fromZ > gridHeight - 1)
 	{
@@ -95,9 +96,16 @@ bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, Navigation
 		return false; // outside of map region !
 	}
 
+
+
 	GridNode* startNode = &allNodes[(fromZ * gridWidth) + fromX];
 	GridNode* endNode = &allNodes[(toZ * gridWidth) + toX];
 	
+	if (endNode->type == WALL_NODE)
+	{
+		return false;
+	}
+
 	std::vector<GridNode*> openList;
 	std::vector<GridNode*> closedList;
 	

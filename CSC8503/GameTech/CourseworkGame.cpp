@@ -73,6 +73,7 @@ void CourseworkGame::UpdateGame(float dt)
 	UpdateKeys(dt);
 
 	MovePlayerCharacter(dt);
+	MoveEnemies(dt);
 
 	world->UpdateWorld(dt);
 	renderer->Update(dt);
@@ -167,6 +168,14 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 	}
 }
 
+void CourseworkGame::MoveEnemies(float dt)
+{
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		enemies[i]->UpdatePosition(playerCharacter, dt);
+	}
+}
+
 void CourseworkGame::InitCamera()
 {
 	world->GetMainCamera()->SetNearPlane(0.5f);
@@ -232,20 +241,13 @@ void CourseworkGame::InitWorld()
 	AddAppleToWorld(Vector3(-220, 22.5, 140));
 	AddAppleToWorld(Vector3(-220, 22.5, 120));
 	//Obstacles
-	for (int i = -3; i <= 3; i++)
-	{
-		for (int j = -3; j <= 3; j++)
-		{
-			if (i == 0 && j == 0)
-			{
-				AddCubeToWorld(Vector3(0, 20, 0), Vector3(3, 3, 3), 0.14f);
-			}
-			else
-			{
-				AddCubeToWorld(Vector3(60 * i, 20, 60 * j), Vector3(rand() % 3 + 1, rand() % 3 + 1, rand() % 3 + 1), rand() % 10 * 0.1f);
-			}
-		}
-	}
+	AddCubeToWorld(Vector3(0, 20, 0), Vector3(3, 3, 3), 0.14f);
+	AddCubeToWorld(Vector3(110, 1.5, -12.5), Vector3(5, 3, 37.5), 0.0f);
+	AddCubeToWorld(Vector3(85, 1.5, -45), Vector3(20, 3, 5), 0.0f);
+	AddCubeToWorld(Vector3(-110, 1.5, 12.5), Vector3(5, 3, 37.5), 0.0f);
+	AddCubeToWorld(Vector3(-85, 1.5, 45), Vector3(20, 3, 5), 0.0f);
+	//Enemies
+	AddParkKeeperToWorld(Vector3(-150, 10, -12.5));
 	//Other collectibles
 	AddSphereToWorld(Vector3(135, 2, 95), 1, 1);
 	AddSphereToWorld(Vector3(-135, 2, -95), 1, 1);
@@ -363,10 +365,10 @@ GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector
 void CourseworkGame::AddTrampolineToWorld(const Vector3& position)
 {
 	AddFloorToWorld(position, Vector3(25, 1.5, 25), Vector4(1, 0, 0, 1), CollisionResolution::Trampoline);
-	AddWallToWorld(position + Vector3(25, 0, 1.5), Vector3(1.5, 2.5, 25));
-	AddWallToWorld(position - Vector3(25, 0, 1.5), Vector3(1.5, 2.5, 25));
-	AddWallToWorld(position + Vector3(-1.5, 0, 25), Vector3(25, 2.5, 1.5));
-	AddWallToWorld(position - Vector3(-1.5, 0, 25), Vector3(25, 2.5, 1.5));
+	AddWallToWorld(position + Vector3(25, 0, 5), Vector3(5, 2.5, 25));
+	AddWallToWorld(position - Vector3(25, 0, 5), Vector3(5, 2.5, 25));
+	AddWallToWorld(position + Vector3(-5, 0, 25), Vector3(25, 2.5, 5));
+	AddWallToWorld(position - Vector3(-5, 0, 25), Vector3(25, 2.5, 5));
 }
 
 GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
@@ -455,7 +457,7 @@ GameObject* CourseworkGame::AddParkKeeperToWorld(const Vector3& position)
 	float meshSize = 4.0f;
 	float inverseMass = 0.5f;
 
-	GameObject* keeper = new GameObject();
+	EnemyObject* keeper = new EnemyObject("2DMap.txt");
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3, 0.9f, 0.3) * meshSize);
 	keeper->SetBoundingVolume((CollisionVolume*)volume);
@@ -468,8 +470,12 @@ GameObject* CourseworkGame::AddParkKeeperToWorld(const Vector3& position)
 
 	keeper->GetPhysicsObject()->SetInverseMass(inverseMass);
 	keeper->GetPhysicsObject()->InitCubeInertia();
+	keeper->GetPhysicsObject()->SetBuoyancy(70);
+	keeper->GetPhysicsObject()->SetElasticity(0.7f);
+	keeper->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline);
 
 	world->AddGameObject(keeper);
+	enemies.push_back(keeper);
 
 	return keeper;
 }

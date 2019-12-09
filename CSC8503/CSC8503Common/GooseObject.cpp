@@ -7,6 +7,11 @@ int GooseObject::GetItemCount() const
 
 int GooseObject::PickUpItem(GameObject* object)
 {
+	//If special object was stolen
+	if (object->GetRenderObject()->GetColour() == Vector4(1.0f, 1.0f, 0.0f, 1.0f))
+	{
+		commitedTheft = true;
+	}
 	pickedUpItems.push_back(object);
 	return pickedUpItems.size() - 1;
 }

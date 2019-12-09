@@ -132,6 +132,9 @@
     <ClInclude Include="GooselandObject.h">
       <Filter>Other</Filter>
     </ClInclude>
+    <ClInclude Include="EnemyObject.h">
+      <Filter>Other</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionDetection.cpp">
@@ -216,6 +219,9 @@
       <Filter>Other</Filter>
     </ClCompile>
     <ClCompile Include="GooselandObject.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyObject.cpp">
       <Filter>Other</Filter>
     </ClCompile>
   </ItemGroup>

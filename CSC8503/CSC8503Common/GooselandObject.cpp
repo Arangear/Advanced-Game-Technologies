@@ -17,5 +17,6 @@ void GooselandObject::OnCollisionBegin(GameObject* otherObject)
 			((GooseObject*)otherObject)->AddPoints(((PickableObject*)object)->GetPointsValue());
 		}
 		((GooseObject*)otherObject)->GetItems().clear();
+		((GooseObject*)otherObject)->DropAllCharges();
 	}
 }

@@ -31,7 +31,20 @@ public:
 	{
 		return pickedUpItems;
 	}
+	//Do we possess stolen goods?
+	bool CommitedTheft() const
+	{
+		return commitedTheft;
+	}
+	//We are upstanding citizens now
+	void DropAllCharges()
+	{
+		commitedTheft = false;
+	}
+
 protected:
 	vector<GameObject*> pickedUpItems;
 	unsigned int points = 0;
+	//Have we stolen not an apple?
+	bool commitedTheft = false;
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "GameTechRenderer.h"
 #include "../CSC8503Common/PhysicsSystem.h"
-#include "../../CSC8503/CSC8503Common/GooseObject.h"
+#include "../../CSC8503/CSC8503Common/EnemyObject.h"
 #include "../../CSC8503/CSC8503Common/GooselandObject.h"
 
 
@@ -28,6 +28,7 @@ namespace NCL
 			void EndGame(float dt);
 
 			void MovePlayerCharacter(float dt);
+			void MoveEnemies(float dt);
 			void CameraMovement();
 
 			GameObject* AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution);
@@ -53,6 +54,8 @@ namespace NCL
 			float sprintCD = 0.0f;
 
 			std::set<PickableObject*> pickables;
+			std::vector<EnemyObject*> enemies;
+
 			float timer = 180.0f;
 
 			void ManageSprint(float dt);

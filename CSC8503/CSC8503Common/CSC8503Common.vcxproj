@@ -137,6 +137,7 @@
     <ClInclude Include="BoundingOOBB.h" />
     <ClInclude Include="BoundingSphere.h" />
     <ClInclude Include="BoundingVolume.h" />
+    <ClInclude Include="EnemyObject.h" />
     <ClInclude Include="GooselandObject.h" />
     <ClInclude Include="GooseObject.h" />
     <ClInclude Include="NavigationGrid.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="BoundingVolume.cpp" />
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="EnemyObject.cpp" />
     <ClCompile Include="GameClient.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameServer.cpp" />
