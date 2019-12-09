@@ -15,6 +15,37 @@
 using namespace NCL;
 using namespace CSC8503;
 
+vector<Vector3> testNodes;
+
+void TestPathfinding()
+{
+	NavigationGrid grid("2DMap.txt");
+	
+	NavigationPath outPath;
+	
+	Vector3 startPos(80, 0, 10);
+	Vector3 endPos(80, 0, 80);
+	
+	bool found = grid.FindPath(startPos, endPos, outPath);
+	
+	Vector3 pos;
+	while (outPath.PopWaypoint(pos))
+	{
+		testNodes.push_back(pos);
+	}
+}
+
+void DisplayPathfinding()
+{
+	for (int i = 1; i < testNodes.size(); ++i)
+	{
+		Vector3 a = testNodes[i - 1];
+		Vector3 b = testNodes[i];
+
+		Debug::DrawLine(a+ Vector3(0,15,0), b + Vector3(0, 15, 0), Vector4(1, 1, 0, 1));
+	}
+}
+
 /*
 
 The main function should look pretty familar to you!
@@ -27,12 +58,15 @@ This time, we've added some extra functionality to the window class - we can
 hide or show the 
 
 */
-int main() {
+int main()
+{
 	Window*w = Window::CreateGameWindow("CSC8503 Advanced Game Technologies", 1280, 720);
 
 	if (!w->HasInitialised()) {
 		return -1;
 	}	
+
+	TestPathfinding();
 	
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
@@ -56,6 +90,8 @@ int main() {
 		w->SetTitle("FPS:" + std::to_string(1.0f / dt));
 
 		g->UpdateGame(dt);
+
+		DisplayPathfinding();
 	}
 	Window::DestroyGameWindow();
 }
