@@ -2,6 +2,9 @@
 #include "PickableObject.h"
 #include "NavigationGrid.h"
 #include "../CSC8503Common/GameWorld.h"
+#include "StateMachine.h"
+#include "State.h"
+#include "StateTransition.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -9,8 +12,8 @@ using namespace CSC8503;
 class EnemyObject : public GameObject
 {
 public:
-	EnemyObject(string filePath) : GameObject() { grid = new NavigationGrid(filePath); }
-	virtual ~EnemyObject() { delete grid; }
+	EnemyObject(string filePath);
+	virtual ~EnemyObject() { delete grid; delete stateMachine; }
 
 	void UpdatePosition(GooseObject*& goose, float dt);
 	void SetOrigin(Vector3 position)
@@ -23,11 +26,16 @@ public:
 	void OnCollisionBegin(GameObject* otherObject);
 
 protected:
+	//Chasing
 	NavigationGrid* grid;
 	vector<Vector3> nodes;
 	float speed = 5000.0f;
 	Vector3 origin;
 	Vector3 targetPosition;
+	StateMachine* stateMachine;
+	GooseObject* chasedGoose = nullptr;
+	float currentDT;
+	bool stateSwitch;
 
 	//Raycasting
 	vector<GameObject*> obstacles;

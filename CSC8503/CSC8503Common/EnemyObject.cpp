@@ -1,53 +1,84 @@
 #include "EnemyObject.h"
 
-void EnemyObject::UpdatePosition(GooseObject*& goose, float dt)
+EnemyObject::EnemyObject(string filePath) : GameObject()
 {
-	NavigationPath path;
-	nodes.clear();
-	if (goose->CommitedTheft())
-	{//Goose found guilty
-		targetPosition = goose->GetConstTransform().GetWorldPosition();
-		targetPosition.y = 0;
-		if ((*grid).FindPath(this->GetConstTransform().GetWorldPosition(), goose->GetConstTransform().GetWorldPosition(), path))
+	grid = new NavigationGrid(filePath);
+	stateMachine = new StateMachine();
+	
+	StateFunc chaseFunc = [](void* data)
+	{
+		EnemyObject* object = (EnemyObject*)data;
+		NavigationPath path;
+		object->nodes.clear();
+		object->targetPosition = object->chasedGoose->GetConstTransform().GetWorldPosition();
+		object->targetPosition.y = 0;
+		if (object->grid->FindPath(object->GetConstTransform().GetWorldPosition(), object->chasedGoose->GetConstTransform().GetWorldPosition(), path))
 		{//Path to justice found
 			Vector3 pos;
 			while (path.PopWaypoint(pos))
 			{
-				nodes.push_back(pos);
+				object->nodes.push_back(pos);
 			}
 
-			optimiseNodes();
-			drawPath();
+			object->optimiseNodes();
+			object->drawPath();
 
-			if (nodes.size() >= 2) //Sanity check
+			if (object->nodes.size() >= 2) //Sanity check
 			{
-				Vector3 direction = nodes[1] - nodes[0];
+				Vector3 direction = object->nodes[1] - object->nodes[0];
 				direction.Normalise();
-				this->GetPhysicsObject()->AddForce(direction * speed * dt);
+				object->GetPhysicsObject()->AddForce(direction * object->speed * object->currentDT);
 			}
 		}
-	}
-	else
-	{//No criminals in sight
-		targetPosition = origin;
-		targetPosition.y = 0;
-		(*grid).FindPath(this->GetConstTransform().GetWorldPosition(), origin, path);
+	};
+	StateFunc returnFunc = [](void* data)
+	{
+		EnemyObject* object = (EnemyObject*)data;
+		NavigationPath path;
+		object->nodes.clear();
+		object->targetPosition = object->origin;
+		object->targetPosition.y = 0;
+		object->grid->FindPath(object->GetConstTransform().GetWorldPosition(), object->origin, path);
 		Vector3 pos;
 		while (path.PopWaypoint(pos))
 		{
-			nodes.push_back(pos);
+			object->nodes.push_back(pos);
 		}
 
-		optimiseNodes();
-		drawPath();
+		object->optimiseNodes();
+		object->drawPath();
 
-		if (nodes.size() >= 2) //Sanity check
+		if (object->nodes.size() >= 2) //Sanity check
 		{
-			Vector3 direction = nodes[1] - nodes[0];
+			Vector3 direction = object->nodes[1] - object->nodes[0];
 			direction.Normalise();
-			this->GetPhysicsObject()->AddForce(direction * speed * dt);
+			object->GetPhysicsObject()->AddForce(direction * object->speed * object->currentDT);
 		}
-	}
+	};
+
+	GenericState* stateChase = new GenericState(chaseFunc, (void*)this);
+	GenericState* stateReturn = new GenericState(returnFunc, (void*)this);
+
+	stateMachine->AddState(stateReturn);
+	stateMachine->AddState(stateChase);
+
+	GenericTransition<bool&, bool>* chaseFromReturn = new GenericTransition<bool&, bool>(
+		GenericTransition<bool&, bool>::EqualsTransition, stateSwitch, true, stateReturn, stateChase);
+
+	GenericTransition<bool&, bool>* returnFromChase = new GenericTransition<bool&, bool>(
+		GenericTransition<bool&, bool>::EqualsTransition, stateSwitch, false, stateChase, stateReturn);
+
+	stateMachine->AddTransition(chaseFromReturn);
+	stateMachine->AddTransition(returnFromChase);
+}
+
+void EnemyObject::UpdatePosition(GooseObject*& goose, float dt)
+{
+	chasedGoose = goose;
+	currentDT = dt;
+	stateSwitch = goose->CommitedTheft();
+
+	stateMachine->Update();
 }
 
 void EnemyObject::OnCollisionBegin(GameObject* otherObject)
