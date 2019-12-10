@@ -69,7 +69,9 @@ void EnemyObject::optimiseNodes()
 {
 	RayCollision collision;
 	vector<Vector3> optimisedNodes;
-	optimisedNodes.push_back(nodes[0]);
+	Vector3 currentPosition = this->GetConstTransform().GetWorldPosition();
+	currentPosition.y = 0;
+	optimisedNodes.push_back(currentPosition);
 	for (int i = 0; i < nodes.size() - 1;)
 	{
 		for (int j = i + 1; j < nodes.size(); j++)
@@ -77,6 +79,7 @@ void EnemyObject::optimiseNodes()
 			Vector3 direction = nodes[j] - nodes[i];
 			direction.Normalise();
 			Ray ray(nodes[i], direction);
+			
 			//Find if there are obstacles on the path
 			if (raycast(ray, collision, true))
 			{

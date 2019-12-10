@@ -22,6 +22,11 @@ public:
 
 	void OnCollisionBegin(GameObject* otherObject);
 
+	void SetSize(const float value)
+	{
+		size = value;
+	}
+
 protected:
 	NavigationGrid* grid;
 	vector<Vector3> nodes;
@@ -31,6 +36,7 @@ protected:
 
 	//Raycasting
 	vector<GameObject*> obstacles;
+	float size;
 
 	void optimiseNodes();
 	bool raycast(Ray& r, RayCollision& closestCollision, bool object = false) const;

@@ -88,6 +88,10 @@ void CourseworkGame::UpdateKeys(float dt)
 	//bias in the calculations - the same objects might keep 'winning' the constraint
 	//allowing the other one to stretch too much etc. Shuffling the order so that it
 	//is random every frame can help reduce such bias.
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F1))
+	{
+		InitWorld(); //We can reset the simulation at any time with F1
+	}
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F9))
 	{
 		world->ShuffleConstraints(true);
@@ -187,9 +191,15 @@ void CourseworkGame::InitCamera()
 
 void CourseworkGame::InitWorld()
 {
-	//Scale the world down at least 2 times
 	world->ClearAndErase();
 	physics->Clear();
+	sprint = 0.0f;
+	sprintCD = 0.0f;
+	forceMagnitude = 300.0f;
+	timer = 180.0f;
+	pickables.clear();
+	enemies.clear();
+	obstacles.clear();
 
 	//Setup
 	Vector3 floorPosition(0, -10, 0);
@@ -466,6 +476,7 @@ GameObject* CourseworkGame::AddParkKeeperToWorld(const Vector3& position)
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3, 0.9f, 0.3) * meshSize);
 	keeper->SetBoundingVolume((CollisionVolume*)volume);
+	keeper->SetSize(meshSize * 0.3f);
 
 	keeper->GetTransform().SetWorldScale(Vector3(meshSize, meshSize, meshSize));
 	keeper->GetTransform().SetWorldPosition(position);
