@@ -80,6 +80,8 @@ void CourseworkGame::UpdateGame(float dt)
 	physics->Update(dt);
 
 	renderer->Render();
+
+	DrawDisplay(dt);
 }
 
 void CourseworkGame::UpdateKeys(float dt)
@@ -572,6 +574,22 @@ void CourseworkGame::ManageSprint(float dt)
 	if (sprintCD > 0)
 	{
 		sprintCD -= dt;
+	}
+}
+
+void CourseworkGame::DrawDisplay(float dt)
+{
+	Debug::Print("Items held: " + std::to_string(playerCharacter->GetItemCount()), Vector2(10, 10));
+	Debug::Print("Points: " + std::to_string(playerCharacter->GetPoints()), Vector2(10, 30));
+	Debug::Print("Items remaining: " + std::to_string(pickables.size()), Vector2(10, 50));
+	Debug::Print("Game over in: " + std::to_string(timer), Vector2(10, 70));
+	if (sprintCD > 0.0f)
+	{
+		Debug::Print("Sprint cd: " + std::to_string(sprintCD), Vector2(10, 90));
+	}
+	if (sprint > 0.0f)
+	{
+		Debug::Print("Sprint over in: " + std::to_string(sprint), Vector2(10, 110));
 	}
 }
 

@@ -98,7 +98,7 @@ void EnemyObject::OnCollisionBegin(GameObject* otherObject)
 
 void EnemyObject::optimiseNodes()
 {
-	RayCollision collision;
+	RayCollision collision[3];
 	vector<Vector3> optimisedNodes;
 	Vector3 currentPosition = this->GetConstTransform().GetWorldPosition();
 	currentPosition.y = 0;
@@ -109,13 +109,21 @@ void EnemyObject::optimiseNodes()
 		{
 			Vector3 direction = nodes[j] - nodes[i];
 			direction.Normalise();
-			Ray ray(nodes[i], direction);
+
+			//Approximate rays to prevent getting stuck in an object
+			Ray ray1(nodes[i], direction);
+			Ray ray2(nodes[i] + Vector3::Cross(direction, Vector3(0, 1, 0)), direction);
+			Ray ray3(nodes[i] - Vector3::Cross(direction, Vector3(0, 1, 0)), direction);
 			
 			//Find if there are obstacles on the path
-			if (raycast(ray, collision, true))
+			if (raycast(ray3, collision[2], true) &&
+				raycast(ray2, collision[1], true) &&
+				raycast(ray1, collision[0], true))
 			{
 				float distance = (nodes[j] - nodes[i]).Length();
-				if (collision.rayDistance < distance && i != j - 1) //Obstacle detected and sanity check
+				if ((collision[2].rayDistance < distance ||
+					collision[1].rayDistance < distance ||
+					collision[0].rayDistance < distance) && i != j - 1) //Obstacle detected and sanity check
 				{
 					//Add previous node to the optimised path
 					optimisedNodes.push_back(nodes[j - 1]);
@@ -128,11 +136,11 @@ void EnemyObject::optimiseNodes()
 			{
 				direction = targetPosition - nodes[i];
 				direction.Normalise();
-				ray = Ray::Ray(nodes[i], direction);
-				if (raycast(ray, collision, true))
+				ray1 = Ray::Ray(nodes[i], direction);
+				if (raycast(ray1, collision[0], true))
 				{
 					float distance = (targetPosition - nodes[i]).Length();
-					if (collision.rayDistance >= distance) //No obstacles on the way directly to target
+					if (collision[0].rayDistance >= distance) //No obstacles on the way directly to target
 					{
 						optimisedNodes.push_back(targetPosition);
 						nodes = optimisedNodes;

@@ -60,6 +60,7 @@ namespace NCL
 			float timer = 180.0f;
 
 			void ManageSprint(float dt);
+			void DrawDisplay(float dt);
 
 			OGLMesh*	cubeMesh	= nullptr;
 			OGLMesh*	sphereMesh	= nullptr;
