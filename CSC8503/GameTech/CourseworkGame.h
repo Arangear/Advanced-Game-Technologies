@@ -55,6 +55,7 @@ namespace NCL
 
 			std::set<PickableObject*> pickables;
 			std::vector<EnemyObject*> enemies;
+			std::vector<GameObject*> obstacles;
 
 			float timer = 180.0f;
 

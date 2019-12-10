@@ -48,9 +48,20 @@ public:
 		return assigned;
 	}
 
+	void ResetPosition()
+	{
+		this->GetTransform().SetWorldPosition(origin);
+	}
+
+	void SetOrigin(const Vector3 position)
+	{
+		origin = position;
+	}
+
 protected:
 	const unsigned int pointsValue;
 	GameObject* owner = nullptr;
 	int id = -1;
 	bool assigned = false;
+	Vector3 origin;
 };

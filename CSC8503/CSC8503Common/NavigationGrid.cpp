@@ -96,15 +96,58 @@ bool NavigationGrid::FindPath(const Vector3& from, const Vector3& to, Navigation
 		return false; // outside of map region !
 	}
 
-
-
 	GridNode* startNode = &allNodes[(fromZ * gridWidth) + fromX];
 	GridNode* endNode = &allNodes[(toZ * gridWidth) + toX];
 	
+	//Goose over unreachable terrain
 	if (endNode->type == WALL_NODE)
 	{
 		return false;
 	}
+
+	//Keeper got to close to an obstacle
+	/*if (startNode->type == WALL_NODE)
+	{
+		GridNode* node;
+
+		int x1 = fromX - 1;
+		int x2 = fromX + 1;
+		int z1 = fromZ - 1;
+		int z2 = fromZ + 1;
+
+		if (!(x1 < 0 || x1 > gridWidth - 1 || z1 < 0 || z1 > gridHeight - 1))
+		{ //Still in the grid
+			node = &allNodes[(z1 * gridWidth) + x1];
+			if (node->type != WALL_NODE)
+			{ //This node is not unreachable
+				startNode = node;
+			}
+		}
+		if (!(x1 < 0 || x1 > gridWidth - 1 || z2 < 0 || z2 > gridHeight - 1))
+		{ //Still in the grid
+			node = &allNodes[(z2 * gridWidth) + x1];
+			if (node->type != WALL_NODE)
+			{ //This node is not unreachable
+				startNode = node;
+			}
+		}
+		if (!(x2 < 0 || x2 > gridWidth - 1 || z1 < 0 || z1 > gridHeight - 1))
+		{ //Still in the grid
+			node = &allNodes[(z1 * gridWidth) + x2];
+			if (node->type != WALL_NODE)
+			{ //This node is not unreachable
+				startNode = node;
+			}
+		}
+		if (!(x2 < 0 || x2 > gridWidth - 1 || z2 < 0 || z2 > gridHeight - 1))
+		{ //Still in the grid
+			node = &allNodes[(z2 * gridWidth) + x2];
+			if (node->type != WALL_NODE)
+			{ //This node is not unreachable
+				startNode = node;
+			}
+		}
+	}*/
 
 	std::vector<GridNode*> openList;
 	std::vector<GridNode*> closedList;

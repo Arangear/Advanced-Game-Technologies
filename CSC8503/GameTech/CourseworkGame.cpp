@@ -205,20 +205,20 @@ void CourseworkGame::InitWorld()
 	//Cage
 	AddFloorToWorld(floorPosition, floorSize, floorColour, CollisionResolution::Spring);
 	AddFloorToWorld(floorPosition, floorSize - Vector3(0, 2, 0), floorColour, CollisionResolution::Impulse);
-	AddWallToWorld(floorPosition + Vector3(floorSize.x, floorSize.x, 0.0f), wallSizeZ);
-	AddWallToWorld(floorPosition - Vector3(floorSize.x, -floorSize.x, 0.0f), wallSizeZ);
-	AddWallToWorld(floorPosition + Vector3(0.0f, floorSize.z, floorSize.z), wallSizeX);
-	AddWallToWorld(floorPosition - Vector3(0.0f, -floorSize.z, floorSize.z), wallSizeX);
+	obstacles.push_back(AddWallToWorld(floorPosition + Vector3(floorSize.x, floorSize.x, 0.0f), wallSizeZ));
+	obstacles.push_back(AddWallToWorld(floorPosition - Vector3(floorSize.x, -floorSize.x, 0.0f), wallSizeZ));
+	obstacles.push_back(AddWallToWorld(floorPosition + Vector3(0.0f, floorSize.z, floorSize.z), wallSizeX));
+	obstacles.push_back(AddWallToWorld(floorPosition - Vector3(0.0f, -floorSize.z, floorSize.z), wallSizeX));
 	//Islands
 	AddIslandToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
 	AddIslandToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
 	//Terrain
 	AddFloorToWorld(Vector3(0, -1, 0), Vector3(250, 1.5, 150), terrainColour, CollisionResolution::Impulse);
-	AddFloorToWorld(Vector3(200, 2.5, -100), Vector3(50, 2.5, 50), terrainColour, CollisionResolution::Impulse);
+	obstacles.push_back(AddFloorToWorld(Vector3(200.15, 2.5, -100.15), Vector3(49.85, 2.5, 49.85), terrainColour, CollisionResolution::Impulse));
 	AddFloorToWorld(Vector3(210, 7.5, -110), Vector3(40, 2.5, 40), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(220, 12.5, -120), Vector3(30, 2.5, 30), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(230, 17.5, -130), Vector3(20, 2.5, 20), terrainColour, CollisionResolution::Impulse);
-	AddFloorToWorld(Vector3(-200, 2.5, 100), Vector3(50, 2.5, 50), terrainColour, CollisionResolution::Impulse);
+	obstacles.push_back(AddFloorToWorld(Vector3(-200.15, 2.5, 100.15), Vector3(49.85, 2.5, 49.85), terrainColour, CollisionResolution::Impulse));
 	AddFloorToWorld(Vector3(-210, 7.5, 110), Vector3(40, 2.5, 40), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-220, 12.5, 120), Vector3(30, 2.5, 30), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-230, 17.5, 130), Vector3(20, 2.5, 20), terrainColour, CollisionResolution::Impulse);
@@ -242,10 +242,10 @@ void CourseworkGame::InitWorld()
 	AddAppleToWorld(Vector3(-220, 22.5, 120));
 	//Obstacles
 	AddCubeToWorld(Vector3(0, 20, 0), Vector3(3, 3, 3), 0.14f);
-	AddCubeToWorld(Vector3(110, 1.5, -12.5), Vector3(5, 3, 37.5), 0.0f);
-	AddCubeToWorld(Vector3(85, 1.5, -45), Vector3(20, 3, 5), 0.0f);
-	AddCubeToWorld(Vector3(-110, 1.5, 12.5), Vector3(5, 3, 37.5), 0.0f);
-	AddCubeToWorld(Vector3(-85, 1.5, 45), Vector3(20, 3, 5), 0.0f);
+	obstacles.push_back(AddCubeToWorld(Vector3(110, 1.5, -12.5), Vector3(4.7, 3, 37.2), 0.0f));
+	obstacles.push_back(AddCubeToWorld(Vector3(85.3, 1.5, -45), Vector3(20, 3, 4.85), 0.0f));
+	obstacles.push_back(AddCubeToWorld(Vector3(-110, 1.5, 12.5), Vector3(4.7, 3, 37.2), 0.0f));
+	obstacles.push_back(AddCubeToWorld(Vector3(-85.3, 1.5, 45), Vector3(20, 3, 4.85), 0.0f));
 	//Enemies
 	AddParkKeeperToWorld(Vector3(-150, 10, -12.5));
 	//Other collectibles
@@ -365,10 +365,10 @@ GameObject* CourseworkGame::AddWallToWorld(const Vector3& position, const Vector
 void CourseworkGame::AddTrampolineToWorld(const Vector3& position)
 {
 	AddFloorToWorld(position, Vector3(25, 1.5, 25), Vector4(1, 0, 0, 1), CollisionResolution::Trampoline);
-	AddWallToWorld(position + Vector3(25, 0, 5), Vector3(5, 2.5, 25));
-	AddWallToWorld(position - Vector3(25, 0, 5), Vector3(5, 2.5, 25));
-	AddWallToWorld(position + Vector3(-5, 0, 25), Vector3(25, 2.5, 5));
-	AddWallToWorld(position - Vector3(-5, 0, 25), Vector3(25, 2.5, 5));
+	obstacles.push_back(AddWallToWorld(position + Vector3(25, 0, 4.7), Vector3(4.7, 2.5, 25)));
+	obstacles.push_back(AddWallToWorld(position - Vector3(25, 0, 4.7), Vector3(4.7, 2.5, 25)));
+	obstacles.push_back(AddWallToWorld(position + Vector3(-4.7, 0, 25), Vector3(25, 2.5, 4.7)));
+	obstacles.push_back(AddWallToWorld(position - Vector3(-4.7, 0, 25), Vector3(25, 2.5, 4.7)));
 }
 
 GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radius, float inverseMass) {
@@ -394,6 +394,8 @@ GameObject* CourseworkGame::AddSphereToWorld(const Vector3& position, float radi
 	Vector4 colour = Vector4(1.0f, 1.0f, 0.0f, 1.0f);
 	sphere->GetRenderObject()->SetColour(colour);
 	sphere->GetRenderObject()->SetOriginalColour(colour);
+
+	sphere->SetOrigin(position);
 
 	world->AddGameObject(sphere);
 	pickables.insert(sphere);
@@ -458,6 +460,9 @@ GameObject* CourseworkGame::AddParkKeeperToWorld(const Vector3& position)
 	float inverseMass = 0.5f;
 
 	EnemyObject* keeper = new EnemyObject("2DMap.txt");
+
+	keeper->SetOrigin(position);
+	keeper->AddObstacles(obstacles);
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3, 0.9f, 0.3) * meshSize);
 	keeper->SetBoundingVolume((CollisionVolume*)volume);
@@ -536,6 +541,7 @@ GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
 
 	apple->GetRenderObject()->SetColour(Vector4(1, 0, 0, 1));
 	apple->GetRenderObject()->SetOriginalColour(Vector4(1, 0, 0, 1));
+	apple->SetOrigin(position);
 
 	world->AddGameObject(apple);
 	pickables.insert(apple);
