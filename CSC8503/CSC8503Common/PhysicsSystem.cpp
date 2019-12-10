@@ -353,7 +353,33 @@ void PhysicsSystem::NarrowPhase()
 		if (CollisionDetection::ObjectIntersection(info.a, info.b, info))
 		{
 			info.framesLeft = numCollisionFrames;
-			ImpulseResolveCollision(*info.a, *info.b, info.point);
+			switch (info.a->GetPhysicsObject()->GetCollisionResolution() & info.b->GetPhysicsObject()->GetCollisionResolution())
+				{
+				case CollisionResolution::Impulse:
+				{
+					ImpulseResolveCollision(*info.a, *info.b, info.point);
+					break;
+				}
+				case CollisionResolution::Spring:
+				{
+					ResolveSpringCollision(*info.a, *info.b, info.point);
+					break;
+				}
+				case CollisionResolution::Collect:
+				{
+					break;
+				}
+				case CollisionResolution::Trampoline:
+				{
+					ResolveTrampolineCollision(*info.a, *info.b, info.point);
+					break;
+				}
+				case CollisionResolution::Impulse | CollisionResolution::Spring | CollisionResolution::Trampoline:
+				{
+					ImpulseResolveCollision(*info.a, *info.b, info.point);
+					break;
+				}
+				}
 			allCollisions.insert(info); // insert into our main set
 		}
 	}

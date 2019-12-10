@@ -37,6 +37,8 @@ protected:
 	float currentDT;
 	bool stateSwitch;
 
+	void initStateMachine();
+
 	//Raycasting
 	vector<GameObject*> obstacles;
 

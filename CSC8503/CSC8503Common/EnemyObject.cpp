@@ -5,6 +5,11 @@ EnemyObject::EnemyObject(string filePath) : GameObject()
 	grid = new NavigationGrid(filePath);
 	stateMachine = new StateMachine();
 	
+	initStateMachine();
+}
+
+void EnemyObject::initStateMachine()
+{
 	StateFunc chaseFunc = [](void* data)
 	{
 		EnemyObject* object = (EnemyObject*)data;

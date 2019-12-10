@@ -3,6 +3,8 @@
 #include "../CSC8503Common/PhysicsSystem.h"
 #include "../../CSC8503/CSC8503Common/EnemyObject.h"
 #include "../../CSC8503/CSC8503Common/GooselandObject.h"
+#include "../CSC8503Common/PushdownMachine.h"
+#include "../CSC8503Common/PushdownState.h"
 
 
 namespace NCL
@@ -57,10 +59,13 @@ namespace NCL
 			std::vector<EnemyObject*> enemies;
 			std::vector<GameObject*> obstacles;
 
+			PushdownMachine* stateMachine;
+
 			float timer = 180.0f;
 
 			void ManageSprint(float dt);
 			void DrawDisplay(float dt);
+			void InitStateMachine();
 
 			OGLMesh*	cubeMesh	= nullptr;
 			OGLMesh*	sphereMesh	= nullptr;
