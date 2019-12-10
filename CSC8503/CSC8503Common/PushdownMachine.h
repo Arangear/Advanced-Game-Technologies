@@ -14,7 +14,7 @@ namespace NCL {
 			void Update();
 
 		protected:
-			PushdownState * activeState;
+			PushdownState* activeState;
 
 			std::stack<PushdownState*> stateStack;
 		};

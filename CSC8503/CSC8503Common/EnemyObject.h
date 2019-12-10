@@ -22,21 +22,15 @@ public:
 
 	void OnCollisionBegin(GameObject* otherObject);
 
-	void SetSize(const float value)
-	{
-		size = value;
-	}
-
 protected:
 	NavigationGrid* grid;
 	vector<Vector3> nodes;
-	float speed = 4000.0f;
+	float speed = 5000.0f;
 	Vector3 origin;
 	Vector3 targetPosition;
 
 	//Raycasting
 	vector<GameObject*> obstacles;
-	float size;
 
 	void optimiseNodes();
 	bool raycast(Ray& r, RayCollision& closestCollision, bool object = false) const;

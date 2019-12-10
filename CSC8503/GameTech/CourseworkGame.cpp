@@ -476,7 +476,6 @@ GameObject* CourseworkGame::AddParkKeeperToWorld(const Vector3& position)
 
 	AABBVolume* volume = new AABBVolume(Vector3(0.3, 0.9f, 0.3) * meshSize);
 	keeper->SetBoundingVolume((CollisionVolume*)volume);
-	keeper->SetSize(meshSize * 0.3f);
 
 	keeper->GetTransform().SetWorldScale(Vector3(meshSize, meshSize, meshSize));
 	keeper->GetTransform().SetWorldPosition(position);
