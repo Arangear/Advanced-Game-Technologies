@@ -11,7 +11,8 @@ namespace NCL {
 			PushdownMachine();
 			~PushdownMachine();
 
-			void Update();
+			void Update(float dt);
+			bool IsEmpty() { return stateStack.empty(); }
 
 		protected:
 			PushdownState* activeState;

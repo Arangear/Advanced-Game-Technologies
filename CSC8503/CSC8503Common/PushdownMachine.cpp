@@ -1,5 +1,6 @@
 #include "PushdownMachine.h"
 #include "PushdownState.h"
+#include "GameState.h"
 using namespace NCL::CSC8503;
 
 PushdownMachine::PushdownMachine()
@@ -11,28 +12,43 @@ PushdownMachine::~PushdownMachine()
 {
 }
 
-void PushdownMachine::Update() {
+void PushdownMachine::Update(float dt) {
 	if (activeState) {
 		PushdownState* newState = nullptr;
 		PushdownState::PushdownResult result = activeState->PushdownUpdate(&newState);
 
 		switch (result) {
-			case PushdownState::Pop: {
-				activeState->OnSleep();
-				stateStack.pop();
-				if (stateStack.empty()) {
-					activeState = nullptr; //??????
-				}
-				else {
-					activeState = stateStack.top();
-					activeState->OnAwake();
-				}
-			}break;
-			case PushdownState::Push: {
-				activeState->OnSleep();
-				stateStack.push(newState);
-				newState->OnAwake();
-			}break;
+		case PushdownState::Pop: {
+			activeState->OnSleep(dt);
+			stateStack.pop();
+			if (stateStack.empty())
+			{//Exit the game
+				activeState = nullptr; //??????
+				exit(0);
+			}
+			else {
+				activeState = stateStack.top();
+				activeState->OnAwake(dt);
+			}
+		}break;
+		case PushdownState::Push: {
+			activeState->OnSleep(dt);
+			stateStack.push(newState);
+			activeState = stateStack.top();
+			newState->OnAwake(dt);
+		}break;
+		case PushdownState::NoChange:
+		{
+			activeState->OnAwake(dt);
+			break;
 		}
+		}
+	}
+	else
+	{ //Nothin on stack, create new game
+		GameState* gameState = new GameState();
+		stateStack.push(gameState);
+		activeState = stateStack.top();
+		activeState->OnAwake(dt);
 	}
 }

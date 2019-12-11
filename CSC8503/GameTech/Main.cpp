@@ -60,9 +60,9 @@ int main()
 	w->ShowOSPointer(false);
 	w->LockMouseToWindow(true);
 
-	CourseworkGame* g = new CourseworkGame();
+	PushdownMachine* pushdownMachine = new PushdownMachine();
 
-	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE))
+	do
 	{
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 
@@ -93,9 +93,12 @@ int main()
 
 		w->SetTitle("FPS:" + std::to_string(1.0f / dt));
 
-		g->UpdateGame(dt);
+		pushdownMachine->Update(dt);
 
 		Debug::FlushRenderables();
-	}
+	} while (w->UpdateWindow() && !pushdownMachine->IsEmpty());
+
+	delete pushdownMachine;
+
 	Window::DestroyGameWindow();
 }
