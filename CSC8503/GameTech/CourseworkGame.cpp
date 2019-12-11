@@ -283,8 +283,7 @@ void CourseworkGame::EndGame(float dt)
 	}
 	if (pickables.size() == 0 || timer <= 0)//All objects placed on islands or 3 minutes have passed
 	{
-		//TODO: do something more interesting
-		exit(0);
+		gameFinished = true;
 	}
 
 	timer -= dt;

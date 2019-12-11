@@ -16,6 +16,7 @@ namespace NCL
 			~CourseworkGame();
 
 			virtual void UpdateGame(float dt);
+			bool IsOver() { return gameFinished; }
 
 		protected:
 			void InitialiseAssets();
@@ -58,6 +59,7 @@ namespace NCL
 			std::vector<GameObject*> obstacles;
 
 			float timer = 180.0f;
+			bool gameFinished = false;
 
 			void ManageSprint(float dt);
 			void DrawDisplay(float dt);
