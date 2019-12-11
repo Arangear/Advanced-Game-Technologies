@@ -26,6 +26,8 @@ namespace NCL
 
 			void InitWorld();
 
+			void QuackAttack();
+
 			void EndGame(float dt);
 			void DisplayGrid();
 
@@ -55,16 +57,20 @@ namespace NCL
 			float		forceMagnitude;
 			float sprint = 0.0f;
 			float sprintCD = 0.0f;
+			float quackAttackCD = 0.0f;
+			float quackForce = -5000.0f;
+			float quackRange = 70.0f;
 
 			std::set<PickableObject*> pickables;
 			std::vector<EnemyObject*> enemies;
 			std::vector<GameObject*> obstacles;
+			std::vector<GameObject*> movables;
 
 			float timer = 180.0f;
 			bool gameFinished = false;
 			bool toggleGrid = false;
 
-			void ManageSprint(float dt);
+			void ManageAbilities(float dt);
 			void DrawDisplay(float dt);
 
 			OGLMesh*	cubeMesh	= nullptr;

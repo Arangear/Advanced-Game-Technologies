@@ -58,7 +58,7 @@ void CourseworkGame::DisplayGrid()
 		{
 			if (grid.GetNodes()[i].connected[j])
 			{
-				renderer->DrawLine(grid.GetNodes()[i].position + Vector3(0, 1, 0), grid.GetNodes()[i].connected[j]->position + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
+				renderer->DrawLine(grid.GetNodes()[i].position + Vector3(0, 1, 0), grid.GetNodes()[i].connected[j]->position + Vector3(0, 1, 0), Vector4(0, 0.2, 0.8, 1));
 			}
 		}
 	}
@@ -82,7 +82,7 @@ void CourseworkGame::UpdateGame(float dt)
 	EndGame(dt);
 
 	playerCharacter->UpdatePositions();
-	ManageSprint(dt);
+	ManageAbilities(dt);
 
 	CameraMovement();
 
@@ -194,6 +194,14 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 			forceMagnitude *= 2;
 		}
 	}
+	if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::E))
+	{
+		if (quackAttackCD <= 0)
+		{
+			quackAttackCD = 5.0f;
+			QuackAttack();
+		}
+	}
 	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::SHIFT))
 	{
 		playerCharacter->GetPhysicsObject()->AddForce(Vector3(0, -2, 0) * forceMagnitude);
@@ -287,32 +295,32 @@ void CourseworkGame::InitWorld()
 	obstacles.push_back(AddCubeToWorld(Vector3(85.3, 1.5, -45), Vector3(20, 3, 4.85), 0.0f));
 	obstacles.push_back(AddCubeToWorld(Vector3(-110, 1.5, 12.5), Vector3(4.7, 3, 37.2), 0.0f));
 	obstacles.push_back(AddCubeToWorld(Vector3(-85.3, 1.5, 45), Vector3(20, 3, 4.85), 0.0f));
-	AddCubeToWorld(Vector3(120, 1, 120), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 1, 125), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 1, 130), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 1, 135), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 1, 140), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 5, 122.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 5, 127.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 5, 132.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 5, 137.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 9, 125), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 9, 130), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 9, 135), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 1, -120), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 1, -125), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 1, -130), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 1, -135), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 1, -140), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 5, -122.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 5, -127.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 5, -132.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 5, -137.5), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 9, -125), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 9, -130), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 9, -135), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(120, 2, 190), Vector3(2, 2, 2), 0.5f);
-	AddCubeToWorld(Vector3(-120, 2, -190), Vector3(2, 2, 2), 0.5f);
+	movables.push_back(AddCubeToWorld(Vector3(120, 1, 120), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 1, 125), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 1, 130), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 1, 135), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 1, 140), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 5, 122.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 5, 127.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 5, 132.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 5, 137.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 9, 125), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 9, 130), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 9, 135), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 1, -120), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 1, -125), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 1, -130), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 1, -135), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 1, -140), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 5, -122.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 5, -127.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 5, -132.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 5, -137.5), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 9, -125), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 9, -130), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 9, -135), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(120, 2, 190), Vector3(2, 2, 2), 0.5f));
+	movables.push_back(AddCubeToWorld(Vector3(-120, 2, -190), Vector3(2, 2, 2), 0.5f));
 	//Enemies
 	AddParkKeeperToWorld(Vector3(-150, 10, -12.5));
 	AddParkKeeperToWorld(Vector3(150, 10, 12.5));
@@ -320,6 +328,44 @@ void CourseworkGame::InitWorld()
 	AddSphereToWorld(Vector3(135, 2, 95), 1, 1);
 	AddSphereToWorld(Vector3(-135, 2, -95), 1, 1);
 	AddSphereToWorld(Vector3(-230, 42, 130), 1, 1);
+	AddSphereToWorld(Vector3(230, 42, -130), 1, 1);
+}
+
+void CourseworkGame::QuackAttack()
+{
+	for (GameObject*& object : movables)
+	{
+		Vector3 direction = playerCharacter->GetConstTransform().GetWorldPosition() - object->GetConstTransform().GetWorldPosition();
+		if (direction.Length() < quackRange)
+		{
+			direction.Normalise();
+
+			Ray* ray = new Ray(playerCharacter->GetConstTransform().GetWorldPosition(), direction);
+			RayCollision collision;
+			if (world->Raycast(*ray, collision, true))
+			{
+				object->GetPhysicsObject()->AddForceAtPosition(direction * quackForce, collision.collidedAt);
+			}
+			delete ray;
+		}
+	}
+	for (EnemyObject*& enemy : enemies)
+	{
+		GameObject* object = (GameObject*&)enemy;
+		Vector3 direction = playerCharacter->GetConstTransform().GetWorldPosition() - object->GetConstTransform().GetWorldPosition();
+		if (direction.Length() < quackRange)
+		{
+			direction.Normalise();
+
+			Ray* ray = new Ray(playerCharacter->GetConstTransform().GetWorldPosition(), direction);
+			RayCollision collision;
+			if (world->Raycast(*ray, collision, true))
+			{
+				object->GetPhysicsObject()->AddForceAtPosition(direction * quackForce, collision.collidedAt);
+			}
+			delete ray;
+		}
+	}
 }
 
 void CourseworkGame::EndGame(float dt)
@@ -645,7 +691,7 @@ GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
 	return apple;
 }
 
-void CourseworkGame::ManageSprint(float dt)
+void CourseworkGame::ManageAbilities(float dt)
 {
 	if (sprint <= 0.0)
 	{
@@ -659,6 +705,10 @@ void CourseworkGame::ManageSprint(float dt)
 	{
 		sprintCD -= dt;
 	}
+	if (quackAttackCD > 0)
+	{
+		quackAttackCD -= dt;
+	}
 }
 
 void CourseworkGame::DrawDisplay(float dt)
@@ -667,13 +717,17 @@ void CourseworkGame::DrawDisplay(float dt)
 	renderer->DrawString("Points: " + std::to_string(playerCharacter->GetPoints()), Vector2(10, 30));
 	renderer->DrawString("Items remaining: " + std::to_string(pickables.size()), Vector2(10, 50));
 	renderer->DrawString("Game over in: " + std::to_string(timer), Vector2(10, 70));
+	if (quackAttackCD > 0.0f)
+	{
+		renderer->DrawString("Quack cd: " + std::to_string(quackAttackCD), Vector2(10, 90));
+	}
 	if (sprintCD > 0.0f)
 	{
-		renderer->DrawString("Sprint cd: " + std::to_string(sprintCD), Vector2(10, 90));
+		renderer->DrawString("Sprint cd: " + std::to_string(sprintCD), Vector2(10, 110));
 	}
 	if (sprint > 0.0f)
 	{
-		renderer->DrawString("Sprint over in: " + std::to_string(sprint), Vector2(10, 110));
+		renderer->DrawString("Sprint over in: " + std::to_string(sprint), Vector2(10, 130));
 	}
 }
 
