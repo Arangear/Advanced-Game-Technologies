@@ -260,6 +260,9 @@ void CourseworkGame::InitWorld()
 	AddFloorToWorld(Vector3(-210, 7.5, 110), Vector3(40, 2.5, 40), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-220, 12.5, 120), Vector3(30, 2.5, 30), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-230, 17.5, 130), Vector3(20, 2.5, 20), terrainColour, CollisionResolution::Impulse);
+	//Ramps
+	AddRampToWorld(Vector3(-230, 40, 130), Vector3(10, 1, 10), Vector3(-20, 0, -20));
+	AddRampToWorld(Vector3(230, 40, -130), Vector3(10, 1, 10), Vector3(20, 0, 20));
 	//Trampoline
 	AddTrampolineToWorld(Vector3(0, 2.5, 0));
 	//Apples
@@ -284,11 +287,39 @@ void CourseworkGame::InitWorld()
 	obstacles.push_back(AddCubeToWorld(Vector3(85.3, 1.5, -45), Vector3(20, 3, 4.85), 0.0f));
 	obstacles.push_back(AddCubeToWorld(Vector3(-110, 1.5, 12.5), Vector3(4.7, 3, 37.2), 0.0f));
 	obstacles.push_back(AddCubeToWorld(Vector3(-85.3, 1.5, 45), Vector3(20, 3, 4.85), 0.0f));
+	AddCubeToWorld(Vector3(120, 1, 120), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 1, 125), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 1, 130), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 1, 135), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 1, 140), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 5, 122.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 5, 127.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 5, 132.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 5, 137.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 9, 125), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 9, 130), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 9, 135), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 1, -120), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 1, -125), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 1, -130), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 1, -135), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 1, -140), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 5, -122.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 5, -127.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 5, -132.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 5, -137.5), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 9, -125), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 9, -130), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 9, -135), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(120, 2, 190), Vector3(2, 2, 2), 0.5f);
+	AddCubeToWorld(Vector3(-120, 2, -190), Vector3(2, 2, 2), 0.5f);
 	//Enemies
 	AddParkKeeperToWorld(Vector3(-150, 10, -12.5));
+	AddParkKeeperToWorld(Vector3(150, 10, 12.5));
 	//Other collectibles
 	AddSphereToWorld(Vector3(135, 2, 95), 1, 1);
 	AddSphereToWorld(Vector3(-135, 2, -95), 1, 1);
+	AddSphereToWorld(Vector3(-230, 42, 130), 1, 1);
 }
 
 void CourseworkGame::EndGame(float dt)
@@ -342,6 +373,34 @@ GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vecto
 	world->AddGameObject(floor);
 
 	return floor;
+}
+
+GameObject* CourseworkGame::AddRampToWorld(const Vector3& position, const Vector3& scale, const Vector3& rotation)
+{
+	GameObject* ramp = new GameObject();
+
+	OBBVolume* volume = new OBBVolume(scale);
+	ramp->SetBoundingVolume((CollisionVolume*)volume);
+	ramp->GetTransform().SetWorldScale(scale);
+	ramp->GetTransform().SetWorldPosition(position);
+	ramp->GetTransform().SetLocalOrientation(Quaternion::EulerAnglesToQuaternion(rotation.x, rotation.y, rotation.z));
+
+	ramp->SetRenderObject(new RenderObject(&ramp->GetTransform(), cubeMesh, basicTex, basicShader));
+	ramp->SetPhysicsObject(new PhysicsObject(&ramp->GetTransform(), ramp->GetBoundingVolume()));
+	ramp->GetPhysicsObject()->SetElasticity(0.0f);
+	ramp->GetPhysicsObject()->SetBuoyancy(0.0f);
+	ramp->GetPhysicsObject()->SetGravityAffinity(false);
+	ramp->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse);
+
+	ramp->GetPhysicsObject()->SetInverseMass(0);
+	ramp->GetPhysicsObject()->InitCubeInertia();
+
+	ramp->GetRenderObject()->SetColour(Vector4(1, 0.89, 0.77, 1));
+	ramp->GetRenderObject()->SetOriginalColour(Vector4(1, 0.89, 0.77, 1));
+
+	world->AddGameObject(ramp);
+
+	return ramp;
 }
 
 GameObject* CourseworkGame::AddIslandToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution)

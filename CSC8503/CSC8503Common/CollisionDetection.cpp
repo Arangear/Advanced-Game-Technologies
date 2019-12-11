@@ -187,6 +187,18 @@ bool CollisionDetection::ObjectIntersection(GameObject* a, GameObject* b, Collis
 		collisionInfo.b = a;
 		return AABBSphereIntersection((AABBVolume&)*volB, transformB, (SphereVolume&)*volA, transformA, collisionInfo);
 	}
+
+	if (volA->type == VolumeType::OBB && volB->type == VolumeType::Sphere)
+	{
+		return OBBSphereIntersection((OBBVolume&)*volA, transformA, (SphereVolume&)*volB, transformB, collisionInfo);
+	}
+
+	if (volA->type == VolumeType::Sphere && volB->type == VolumeType::OBB)
+	{
+		collisionInfo.a = b;
+		collisionInfo.b = a;
+		return OBBSphereIntersection((OBBVolume&)*volB, transformB, (SphereVolume&)*volA, transformA, collisionInfo);
+	}
 	
 	return false;
 }
@@ -279,6 +291,9 @@ bool CollisionDetection::SphereIntersection(const SphereVolume& volumeA, const T
 bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const Transform& worldTransformA,
 	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
 	Vector3 boxSize = volumeA.GetHalfDimensions();
+
+	Vector3 tempA = worldTransformA.GetWorldPosition();
+	Vector3 tempB = worldTransformB.GetWorldPosition();
 	
 	Vector3 delta = worldTransformB.GetWorldPosition() - worldTransformA.GetWorldPosition();
 	
@@ -301,10 +316,29 @@ bool CollisionDetection::AABBSphereIntersection(const AABBVolume& volumeA, const
 	return false;
 }
 
-bool CollisionDetection::OBBIntersection(
+bool CollisionDetection::OBBSphereIntersection(
 	const OBBVolume& volumeA, const Transform& worldTransformA,
-	const OBBVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo) {
-	return false;
+	const SphereVolume& volumeB, const Transform& worldTransformB, CollisionInfo& collisionInfo)
+{
+	AABBVolume aabb(volumeA.GetHalfDimensions());
+	Transform transform1;
+	Transform transform2;
+
+	Vector3 delta = worldTransformB.GetWorldPosition() - worldTransformA.GetWorldPosition();
+
+	transform2.SetWorldPosition(worldTransformA.GetLocalOrientation().Conjugate() * delta);
+
+	if (AABBSphereIntersection(aabb, transform1, volumeB, transform2, collisionInfo))
+	{
+		collisionInfo.point.normal = worldTransformA.GetLocalOrientation()* collisionInfo.point.normal;
+		collisionInfo.point.localA = worldTransformA.GetLocalOrientation() * collisionInfo.point.localA;
+		collisionInfo.point.localB = worldTransformA.GetLocalOrientation() * collisionInfo.point.localB;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 //It's helper functions for generating rays from here on out:
