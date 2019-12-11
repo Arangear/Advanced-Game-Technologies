@@ -48,6 +48,22 @@ void CourseworkGame::InitialiseAssets()
 	InitWorld();
 }
 
+void CourseworkGame::DisplayGrid()
+{
+	NavigationGrid grid("2DMap.txt");
+
+	for (int i = 0; i < grid.GetNodeCount(); i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			if (grid.GetNodes()[i].connected[j])
+			{
+				renderer->DrawLine(grid.GetNodes()[i].position + Vector3(0, 1, 0), grid.GetNodes()[i].connected[j]->position + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
+			}
+		}
+	}
+}
+
 CourseworkGame::~CourseworkGame()
 {
 	delete cubeMesh;
@@ -81,6 +97,12 @@ void CourseworkGame::UpdateGame(float dt)
 
 	renderer->Render();
 
+	//Display AI pathfinding grid
+	if (toggleGrid)
+	{
+		DisplayGrid();
+	}
+
 	DrawDisplay(dt);
 }
 
@@ -110,6 +132,10 @@ void CourseworkGame::UpdateKeys(float dt)
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::F8))
 	{
 		world->ShuffleObjects(false);
+	}
+	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::L))
+	{
+		toggleGrid = !toggleGrid;
 	}
 }
 
@@ -578,17 +604,17 @@ void CourseworkGame::ManageSprint(float dt)
 
 void CourseworkGame::DrawDisplay(float dt)
 {
-	Debug::Print("Items held: " + std::to_string(playerCharacter->GetItemCount()), Vector2(10, 10));
-	Debug::Print("Points: " + std::to_string(playerCharacter->GetPoints()), Vector2(10, 30));
-	Debug::Print("Items remaining: " + std::to_string(pickables.size()), Vector2(10, 50));
-	Debug::Print("Game over in: " + std::to_string(timer), Vector2(10, 70));
+	renderer->DrawString("Items held: " + std::to_string(playerCharacter->GetItemCount()), Vector2(10, 10));
+	renderer->DrawString("Points: " + std::to_string(playerCharacter->GetPoints()), Vector2(10, 30));
+	renderer->DrawString("Items remaining: " + std::to_string(pickables.size()), Vector2(10, 50));
+	renderer->DrawString("Game over in: " + std::to_string(timer), Vector2(10, 70));
 	if (sprintCD > 0.0f)
 	{
-		Debug::Print("Sprint cd: " + std::to_string(sprintCD), Vector2(10, 90));
+		renderer->DrawString("Sprint cd: " + std::to_string(sprintCD), Vector2(10, 90));
 	}
 	if (sprint > 0.0f)
 	{
-		Debug::Print("Sprint over in: " + std::to_string(sprint), Vector2(10, 110));
+		renderer->DrawString("Sprint over in: " + std::to_string(sprint), Vector2(10, 110));
 	}
 }
 

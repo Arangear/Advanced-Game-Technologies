@@ -145,6 +145,7 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GooselandObject.h" />
     <ClInclude Include="GooseObject.h" />
+    <ClInclude Include="MenuState.h" />
     <ClInclude Include="NavigationGrid.h" />
     <ClInclude Include="NavigationMap.h" />
     <ClInclude Include="NavigationMesh.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="GooselandObject.cpp" />
     <ClCompile Include="GooseObject.cpp" />
+    <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="NavigationGrid.cpp" />
     <ClCompile Include="NavigationMesh.cpp" />
     <ClCompile Include="NetworkBase.cpp" />

@@ -1,6 +1,7 @@
 #include "PushdownMachine.h"
 #include "PushdownState.h"
 #include "GameState.h"
+#include "MenuState.h"
 using namespace NCL::CSC8503;
 
 PushdownMachine::PushdownMachine()
@@ -47,9 +48,9 @@ void PushdownMachine::Update(float dt) {
 		}
 	}
 	else
-	{ //Nothin on stack, create new game
-		GameState* gameState = new GameState();
-		stateStack.push(gameState);
+	{ //Nothin on stack, initialise
+		MenuState* menuState = new MenuState();
+		stateStack.push(menuState);
 		activeState = stateStack.top();
 		activeState->OnAwake(dt);
 	}

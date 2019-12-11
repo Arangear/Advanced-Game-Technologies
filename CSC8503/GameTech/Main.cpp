@@ -18,24 +18,6 @@
 using namespace NCL;
 using namespace CSC8503;
 
-bool toggleGrid = false;
-
-void DisplayGrid()
-{
-	NavigationGrid grid("2DMap.txt");
-
-	for (int i = 0; i < grid.GetNodeCount(); i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			if (grid.GetNodes()[i].connected[j])
-			{
-				Debug::DrawLine(grid.GetNodes()[i].position + Vector3(0,1,0), grid.GetNodes()[i].connected[j]->position + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
-			}
-		}
-	}
-}
-
 /*
 
 The main function should look pretty familar to you!
@@ -78,17 +60,6 @@ int main()
 		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::NEXT))
 		{
 			w->ShowConsole(false);
-		}
-		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::L))
-		{
-			toggleGrid = !toggleGrid;
-		}
-
-
-		//Display AI pathfinding grid
-		if (toggleGrid)
-		{
-			DisplayGrid();
 		}
 
 		w->SetTitle("FPS:" + std::to_string(1.0f / dt));

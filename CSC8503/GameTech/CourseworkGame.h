@@ -27,6 +27,7 @@ namespace NCL
 			void InitWorld();
 
 			void EndGame(float dt);
+			void DisplayGrid();
 
 			void MovePlayerCharacter(float dt);
 			void MoveEnemies(float dt);
@@ -60,6 +61,7 @@ namespace NCL
 
 			float timer = 180.0f;
 			bool gameFinished = false;
+			bool toggleGrid = false;
 
 			void ManageSprint(float dt);
 			void DrawDisplay(float dt);
