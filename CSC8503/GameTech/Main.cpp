@@ -9,11 +9,16 @@
 
 #include "../CSC8503Common/NavigationGrid.h"
 
+#include "../CSC8503Common/PushdownMachine.h"
+#include "../CSC8503Common/PushdownState.h"
+
 #include "CourseworkGame.h"
 #include "NetworkedGame.h"
 
 using namespace NCL;
 using namespace CSC8503;
+
+bool toggleGrid = false;
 
 void DisplayGrid()
 {
@@ -25,7 +30,7 @@ void DisplayGrid()
 		{
 			if (grid.GetNodes()[i].connected[j])
 			{
-				Debug::DrawLine(grid.GetNodes()[i].position + Vector3(0,5,0), grid.GetNodes()[i].connected[j]->position + Vector3(0, 5, 0), Vector4(1, 0, 0, 1));
+				Debug::DrawLine(grid.GetNodes()[i].position + Vector3(0,1,0), grid.GetNodes()[i].connected[j]->position + Vector3(0, 1, 0), Vector4(1, 0, 0, 1));
 			}
 		}
 	}
@@ -61,7 +66,8 @@ int main()
 	{
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 
-		if (dt > 1.0f) {
+		if (dt > 1.0f)
+		{
 			std::cout << "Skipping large time delta" << std::endl;
 			continue; //must have hit a breakpoint or something to have a 1 second frame time!
 		}
@@ -73,9 +79,17 @@ int main()
 		{
 			w->ShowConsole(false);
 		}
+		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::L))
+		{
+			toggleGrid = !toggleGrid;
+		}
 
-		//DisplayPathfinding();
-		//DisplayGrid();
+
+		//Display AI pathfinding grid
+		if (toggleGrid)
+		{
+			DisplayGrid();
+		}
 
 		w->SetTitle("FPS:" + std::to_string(1.0f / dt));
 

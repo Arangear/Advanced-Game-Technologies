@@ -22,7 +22,6 @@ CourseworkGame::CourseworkGame()
 	Debug::SetRenderer(renderer);
 
 	InitialiseAssets();
-	InitStateMachine();
 }
 
 void CourseworkGame::InitialiseAssets()
@@ -60,8 +59,6 @@ CourseworkGame::~CourseworkGame()
 	delete physics;
 	delete renderer;
 	delete world;
-
-	delete machine;
 }
 
 void CourseworkGame::UpdateGame(float dt)
@@ -594,11 +591,5 @@ void CourseworkGame::DrawDisplay(float dt)
 	{
 		Debug::Print("Sprint over in: " + std::to_string(sprint), Vector2(10, 110));
 	}
-}
-
-void CourseworkGame::InitStateMachine()
-{
-	stateMachine = new PushdownMachine();
-
 }
 
