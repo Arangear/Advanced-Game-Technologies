@@ -30,13 +30,15 @@ void PushdownMachine::Update(float dt) {
 				activeState = stateStack.top();
 				activeState->OnAwake(dt);
 			}
-		}break;
+			break;
+		}
 		case PushdownState::Push: {
 			activeState->OnSleep(dt);
 			stateStack.push(newState);
 			activeState = stateStack.top();
 			newState->OnAwake(dt);
-		}break;
+			break;
+		}
 		case PushdownState::NoChange:
 		{
 			activeState->OnAwake(dt);
