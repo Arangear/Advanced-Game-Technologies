@@ -32,7 +32,7 @@ namespace NCL
 			void DisplayGrid();
 
 			void MovePlayerCharacter(float dt);
-			void MoveEnemies(float dt);
+			virtual void MoveEnemies(float dt);
 			void CameraMovement();
 
 			GameObject* AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution);

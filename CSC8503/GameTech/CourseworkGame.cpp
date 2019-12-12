@@ -234,6 +234,9 @@ void CourseworkGame::InitWorld()
 	physics->Clear();
 	playerCharacter->GetSprint() = 0.0f;
 	playerCharacter->GetSprintCD() = 0.0f;
+	playerCharacter->GetQuackAttackCD() = 0.0f;
+	playerCharacter->GetQuackID() = 0.0f;
+	playerCharacter->GetSpeedMultiplier() = 0.0f;
 	forceMagnitude = 300.0f;
 	timer = 180.0f;
 	pickables.clear();

@@ -29,6 +29,8 @@ namespace NCL {
 			void UpdateAsServer(float dt);
 			void UpdateAsClient(float dt);
 
+			void MoveEnemies(float dt) override;
+
 			std::map<int, int> stateIDs;
 
 			GameServer* thisServer;
