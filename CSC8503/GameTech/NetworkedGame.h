@@ -10,16 +10,18 @@ namespace NCL {
 		class NetworkedGame : public CourseworkGame, public PacketReceiver {
 		public:
 			NetworkedGame();
-			~NetworkedGame();
+			virtual ~NetworkedGame();
 
 			void StartAsServer();
 			void StartAsClient(char a, char b, char c, char d);
 
 			void UpdateGame(float dt) override;
 
-			void SpawnPlayer();
+			void SpawnPlayer(int id, const Vector3& position);
 
 			void StartLevel();
+
+			void GenerateNetworkObjects();
 
 			void ReceivePacket(int type, GamePacket* payload, int source) override;
 
@@ -29,8 +31,8 @@ namespace NCL {
 			void UpdateAsServer(float dt);
 			void UpdateAsClient(float dt);
 
-			void BroadcastSnapshot(bool deltaFrame);
-			void UpdateMinimumState();
+			void MoveEnemies(float dt) override;
+
 			std::map<int, int> stateIDs;
 
 			GameServer* thisServer;
@@ -39,9 +41,10 @@ namespace NCL {
 			int packetsToSnapshot;
 
 			std::vector<NetworkObject*> networkObjects;
+			std::vector<GooselandObject*> islands;
 
-			std::map<int, GameObject*> serverPlayers;
-			GameObject* localPlayer;
+			std::map<int, GooseObject*> serverPlayers;
+			GooseObject* localPlayer;
 		};
 	}
 }

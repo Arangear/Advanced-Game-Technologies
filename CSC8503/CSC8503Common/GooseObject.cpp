@@ -23,3 +23,23 @@ void GooseObject::UpdatePositions()
 		pickedUpItems[i]->UpdateObjectPosition(i + 1, GetConstTransform().GetWorldPosition());
 	}
 }
+
+void GooseObject::ManageAbilities(const float dt)
+{
+	if (sprint <= 0.0)
+	{
+		speedMultiplier = 1;
+	}
+	if (sprint > 0)
+	{
+		sprint -= dt;
+	}
+	if (sprintCD > 0)
+	{
+		sprintCD -= dt;
+	}
+	if (quackAttackCD > 0)
+	{
+		quackAttackCD -= dt;
+	}
+}

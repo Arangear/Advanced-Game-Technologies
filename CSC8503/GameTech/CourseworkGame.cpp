@@ -84,7 +84,7 @@ void CourseworkGame::UpdateGame(float dt)
 	EndGame(dt);
 
 	playerCharacter->UpdatePositions();
-	ManageAbilities(dt);
+	playerCharacter->ManageAbilities(dt);
 
 	CameraMovement();
 
@@ -171,11 +171,11 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 	}
 	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::W))
 	{
-		playerCharacter->GetPhysicsObject()->AddForce(playerCharacter->GetConstTransform().GetLocalOrientation() * Vector3(0, 0, 1) * forceMagnitude);
+		playerCharacter->GetPhysicsObject()->AddForce(playerCharacter->GetConstTransform().GetLocalOrientation() * Vector3(0, 0, 1) * forceMagnitude * playerCharacter->GetSpeedMultiplier());
 	}
 	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::S))
 	{
-		playerCharacter->GetPhysicsObject()->AddForce(playerCharacter->GetConstTransform().GetLocalOrientation() * Vector3(0, 0, -1) * forceMagnitude);
+		playerCharacter->GetPhysicsObject()->AddForce(playerCharacter->GetConstTransform().GetLocalOrientation() * Vector3(0, 0, -1) * forceMagnitude * playerCharacter->GetSpeedMultiplier());
 	}
 	if (Window::GetKeyboard()->KeyDown(NCL::KeyboardKeys::D))
 	{
@@ -189,20 +189,20 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 	}
 	if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::Q))
 	{
-		if (sprintCD <= 0)
+		if (playerCharacter->GetSprintCD() <= 0)
 		{
-			sprint = 3.0f;
-			sprintCD = 5.0f;
-			forceMagnitude *= 2;
+			playerCharacter->GetSprint() = 3.0f;
+			playerCharacter->GetSprintCD() = 5.0f;
+			playerCharacter->GetSpeedMultiplier() = 2.0f;
 		}
 	}
 	if (Window::GetKeyboard()->KeyPressed(NCL::KeyboardKeys::E))
 	{
-		if (quackAttackCD <= 0)
+		if (playerCharacter->GetQuackAttackCD() <= 0)
 		{
-			quackAttackCD = 5.0f;
-			quackID++;
-			quackID = quackID >= 6 ? 0 : quackID;
+			playerCharacter->GetQuackAttackCD() = 5.0f;
+			playerCharacter->GetQuackID()++;
+			playerCharacter->GetQuackID() = playerCharacter->GetQuackID() >= 6 ? 0 : playerCharacter->GetQuackID();
 			QuackAttack();
 		}
 	}
@@ -233,8 +233,6 @@ void CourseworkGame::InitWorld()
 {
 	world->ClearAndErase();
 	physics->Clear();
-	sprint = 0.0f;
-	sprintCD = 0.0f;
 	forceMagnitude = 300.0f;
 	timer = 180.0f;
 	pickables.clear();
@@ -342,7 +340,7 @@ void CourseworkGame::QuackAttack()
 	for (GameObject*& object : movables)
 	{
 		Vector3 direction = object->GetConstTransform().GetWorldPosition() - playerCharacter->GetConstTransform().GetWorldPosition();
-		if (direction.Length() < quackRange)
+		if (direction.Length() < playerCharacter->GetQuackRange())
 		{
 			direction.Normalise();
 
@@ -350,7 +348,7 @@ void CourseworkGame::QuackAttack()
 			RayCollision collision;
 			if (world->Raycast(*ray, collision, true))
 			{
-				object->GetPhysicsObject()->AddForceAtPosition(direction * quackForce, collision.collidedAt);
+				object->GetPhysicsObject()->AddForceAtPosition(direction * playerCharacter->GetQuackForce(), collision.collidedAt);
 			}
 			delete ray;
 		}
@@ -359,7 +357,7 @@ void CourseworkGame::QuackAttack()
 	{
 		GameObject* object = (GameObject*&)enemy;
 		Vector3 direction = object->GetConstTransform().GetWorldPosition() - playerCharacter->GetConstTransform().GetWorldPosition();
-		if (direction.Length() < quackRange)
+		if (direction.Length() < playerCharacter->GetQuackRange())
 		{
 			direction.Normalise();
 
@@ -367,7 +365,7 @@ void CourseworkGame::QuackAttack()
 			RayCollision collision;
 			if (world->Raycast(*ray, collision, true))
 			{
-				object->GetPhysicsObject()->AddForceAtPosition(direction * 3 * quackForce, collision.collidedAt);
+				object->GetPhysicsObject()->AddForceAtPosition(direction * 3 * playerCharacter->GetQuackForce(), collision.collidedAt);
 			}
 			delete ray;
 		}
@@ -713,80 +711,29 @@ GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position)
 	return apple;
 }
 
-void CourseworkGame::ManageAbilities(float dt)
-{
-	if (sprint <= 0.0)
-	{
-		forceMagnitude = 300.0f;
-	}
-	if (sprint > 0)
-	{
-		sprint -= dt;
-	}
-	if (sprintCD > 0)
-	{
-		sprintCD -= dt;
-	}
-	if (quackAttackCD > 0)
-	{
-		quackAttackCD -= dt;
-	}
-}
-
 void CourseworkGame::DrawDisplay(float dt)
 {
 	renderer->DrawString("Items held: " + std::to_string(playerCharacter->GetItemCount()), Vector2(10, 10));
 	renderer->DrawString("Points: " + std::to_string(playerCharacter->GetPoints()), Vector2(10, 30));
 	renderer->DrawString("Items remaining: " + std::to_string(pickables.size()), Vector2(10, 50));
 	renderer->DrawString("Game over in: " + std::to_string(timer), Vector2(10, 70));
-	if (quackAttackCD > 0.0f)
+	if (playerCharacter->GetQuackAttackCD() > 0.0f)
 	{
-		renderer->DrawString("Quack cd: " + std::to_string(quackAttackCD), Vector2(10, 90));
+		renderer->DrawString("Quack cd: " + std::to_string(playerCharacter->GetQuackAttackCD()), Vector2(10, 90));
 	}
-	if (sprintCD > 0.0f)
+	if (playerCharacter->GetSprintCD() > 0.0f)
 	{
-		renderer->DrawString("Sprint cd: " + std::to_string(sprintCD), Vector2(10, 110));
+		renderer->DrawString("Sprint cd: " + std::to_string(playerCharacter->GetSprintCD()), Vector2(10, 110));
 	}
-	if (sprint > 0.0f)
+	if (playerCharacter->GetSprint() > 0.0f)
 	{
-		renderer->DrawString("Sprint over in: " + std::to_string(sprint), Vector2(10, 130));
+		renderer->DrawString("Sprint over in: " + std::to_string(playerCharacter->GetSprint()), Vector2(10, 130));
 	}
 	//Fun purposes
-	if (quackAttackCD > 4.0f)
+	if (playerCharacter->GetQuackAttackCD() > 4.0f)
 	{
-		switch (quackID)
-		{
-		case 0:
-		{
-			renderer->DrawString("Quack!", Vector2(560, 230), Vector4(0, 0.88, 0.72, 1));
-			break;
-		}
-		case 1:
-		{
-			renderer->DrawString("QUAAARRGH!", Vector2(500, 230), Vector4(0, 0.88, 0.72, 1));
-			break;
-		}
-		case 2:
-		{
-			renderer->DrawString("Quack off!", Vector2(500, 230), Vector4(0, 0.88, 0.72, 1));
-			break;
-		}
-		case 3:
-		{
-			renderer->DrawString("Geese lives matter!", Vector2(380, 230), Vector4(0, 0.88, 0.72, 1));
-			break;
-		}
-		case 4:
-		{
-			renderer->DrawString("Brexit!", Vector2(540, 230), Vector4(0, 0.88, 0.72, 1));
-			break;
-		}
-		case 5:
-		{
-			renderer->DrawString("Quack at me mate!", Vector2(400, 230), Vector4(0, 0.88, 0.72, 1));
-			break;
-		}
-		}
+		std::pair<string, std::pair<int, int>> message = playerCharacter->GetMessages()[playerCharacter->GetQuackID()];
+		renderer->DrawString(message.first, Vector2(message.second.first, message.second.second), Vector4(0, 0.88, 0.72, 1));
 	}
 }
 

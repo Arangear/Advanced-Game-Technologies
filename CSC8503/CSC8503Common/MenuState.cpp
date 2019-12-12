@@ -1,5 +1,7 @@
 #include "MenuState.h"
 #include "GameState.h"
+#include "ServerState.h"
+#include "PlayerState.h"
 
 void MenuState::OnAwake(float dt)
 {
@@ -15,6 +17,16 @@ PushdownState::PushdownResult MenuState::PushdownUpdate(PushdownState** pushResu
 		case MenuOption::Start:
 		{
 			*pushResult = new GameState();
+			return PushdownState::PushdownResult::Push;
+		}
+		case MenuOption::Host:
+		{
+			*pushResult = new ServerState();
+			return PushdownState::PushdownResult::Push;
+		}
+		case MenuOption::Join:
+		{
+			*pushResult = new PlayerState();
 			return PushdownState::PushdownResult::Push;
 		}
 		case MenuOption::Quit:

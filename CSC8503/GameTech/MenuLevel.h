@@ -4,7 +4,7 @@
 using namespace NCL;
 using namespace CSC8503;
 
-enum MenuOption {Start, Quit};
+enum MenuOption {Start, Host, Join, Quit};
 
 class MenuLevel
 {
@@ -23,6 +23,6 @@ protected:
 	GameTechRenderer* renderer;
 	GameWorld* world;
 
-	vector<string> buttons = { "Start game", "Quit" };
+	vector<string> buttons = { "Start singleplayer game", "Set up server", "Join a hosted game", "Quit" };
 	int selected = 0;
 };

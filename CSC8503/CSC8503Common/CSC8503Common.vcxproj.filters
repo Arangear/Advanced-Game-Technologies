@@ -19,6 +19,9 @@
     <Filter Include="Other">
       <UniqueIdentifier>{7d85adc6-7681-4657-8953-c5696f06c66d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="States">
+      <UniqueIdentifier>{446e3aac-1fb4-4546-a568-60653a7eac42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionDetection.h">
@@ -135,14 +138,20 @@
     <ClInclude Include="EnemyObject.h">
       <Filter>Other</Filter>
     </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>AI</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuState.h">
-      <Filter>AI</Filter>
-    </ClInclude>
     <ClInclude Include="HingeConstraint.h">
       <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerState.h">
+      <Filter>States</Filter>
     </ClInclude>
     <ClInclude Include="FixedHeightConstraint.h">
       <Filter>Physics</Filter>
@@ -236,14 +245,20 @@
     <ClCompile Include="EnemyObject.cpp">
       <Filter>Other</Filter>
     </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>AI</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuState.cpp">
-      <Filter>AI</Filter>
-    </ClCompile>
     <ClCompile Include="HingeConstraint.cpp">
       <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerState.cpp">
+      <Filter>States</Filter>
     </ClCompile>
     <ClCompile Include="FixedHeightConstraint.cpp">
       <Filter>Physics</Filter>
