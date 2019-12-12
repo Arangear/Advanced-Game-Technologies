@@ -8,7 +8,8 @@
 
 NetworkedGame::NetworkedGame() : CourseworkGame()
 {
-
+	StartLevel();
+	GenerateNetworkObjects();
 }
 
 NetworkedGame::~NetworkedGame()
@@ -35,7 +36,15 @@ void NetworkedGame::StartAsServer()
 		//do something
 	}
 
-	StartLevel();
+	//Initialise static objects
+
+	localPlayer = serverPlayers.at(0);
+
+	//play game
+	while (true)
+	{
+		//receive some packets and update
+	}
 }
 
 void NetworkedGame::StartAsClient(char a, char b, char c, char d)
@@ -51,6 +60,20 @@ void NetworkedGame::StartAsClient(char a, char b, char c, char d)
 	thisClient->RegisterPacketHandler(String_Message, &clientReceiver);
 
 	thisClient->Connect(a, b, c, d, port);
+
+	//wait for the map data
+	while (true)
+	{
+		//do something
+	}
+
+	localPlayer = serverPlayers.at(1);
+
+	//play game
+	while (true)
+	{
+		//receive some packets and update
+	}
 }
 
 void NetworkedGame::UpdateGame(float dt)
@@ -63,21 +86,18 @@ void NetworkedGame::UpdateGame(float dt)
 		player.second->ManageAbilities(dt);
 	}
 	MoveEnemies(dt);
-
-	world->UpdateWorld(dt);
-	renderer->Update(dt);
-	physics->Update(dt);
 }
 
-void NetworkedGame::SpawnPlayer(int id)
+void NetworkedGame::SpawnPlayer(int id, const Vector3& position)
 {
-	//Spawn player and attach him to his island and controller
-	GooseObject* player = new GooseObject();
-
+	GooseObject* player = AddGooseToWorld(position);
+	serverPlayers.insert(std::pair<int, GooseObject*>(id, player));
 }
 
 void NetworkedGame::StartLevel()
 {
+	serverPlayers.clear();
+	networkObjects.clear();
 	world->ClearAndErase();
 	physics->Clear();
 	forceMagnitude = 300.0f;
@@ -85,12 +105,6 @@ void NetworkedGame::StartLevel()
 	pickables.clear();
 	enemies.clear();
 	obstacles.clear();
-
-	//Spawn players
-	for (int i = 0; i < 2; i++)
-	{
-		SpawnPlayer(i);
-	}
 
 	//Setup
 	Vector3 floorPosition(0, -10, 0);
@@ -101,8 +115,6 @@ void NetworkedGame::StartLevel()
 	Vector4 floorColour(0, 0, 1, 1);
 	Vector4 islandColour(1, 1, 0, 1);
 	Vector4 terrainColour(0, 1, 0, 1);
-	//Goose
-	playerCharacter = AddGooseToWorld(Vector3(212.5, 4, 212.5));
 	//Cage
 	AddFloorToWorld(floorPosition, floorSize, floorColour, CollisionResolution::Spring);
 	AddFloorToWorld(floorPosition, floorSize - Vector3(0, 2, 0), floorColour, CollisionResolution::Impulse);
@@ -111,9 +123,9 @@ void NetworkedGame::StartLevel()
 	obstacles.push_back(AddWallToWorld(floorPosition + Vector3(0.0f, floorSize.z, floorSize.z), wallSizeX));
 	obstacles.push_back(AddWallToWorld(floorPosition - Vector3(0.0f, -floorSize.z, floorSize.z), wallSizeX));
 	//Islands
-	AddIslandToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
-	AddIslandToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
-	AddGateToWorld(floorPosition + floorSize * 0.85f + Vector3(-12, 2, -12), Vector3(0, 0, 0));
+	islands.push_back((GooselandObject*)AddIslandToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse));
+	islands.push_back((GooselandObject*)AddIslandToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse));
+	//AddGateToWorld(floorPosition + floorSize * 0.85f + Vector3(-12, 2, -12), Vector3(0, 0, 0));
 	//Terrain
 	AddFloorToWorld(Vector3(0, -1, 0), Vector3(250, 1.5, 150), terrainColour, CollisionResolution::Impulse);
 	obstacles.push_back(AddFloorToWorld(Vector3(200.15, 2.5, -100.15), Vector3(49.85, 2.5, 49.85), terrainColour, CollisionResolution::Impulse));
@@ -129,28 +141,40 @@ void NetworkedGame::StartLevel()
 	AddRampToWorld(Vector3(230, 40, -130), Vector3(10, 1, 10), Vector3(20, 0, 20), 0);
 	//Trampoline
 	AddTrampolineToWorld(Vector3(0, 2.5, 0));
-	//Apples
-	AddAppleToWorld(Vector3(0, 30, 0));
-	AddAppleToWorld(Vector3(-20, 30, -20));
-	AddAppleToWorld(Vector3(-20, 30, 20));
-	AddAppleToWorld(Vector3(20, 30, -20));
-	AddAppleToWorld(Vector3(20, 30, 20));
-	AddAppleToWorld(Vector3(230, 22.5, -130));
-	AddAppleToWorld(Vector3(240, 22.5, -140));
-	AddAppleToWorld(Vector3(240, 22.5, -120));
-	AddAppleToWorld(Vector3(220, 22.5, -140));
-	AddAppleToWorld(Vector3(220, 22.5, -120));
-	AddAppleToWorld(Vector3(-230, 22.5, 130));
-	AddAppleToWorld(Vector3(-240, 22.5, 140));
-	AddAppleToWorld(Vector3(-240, 22.5, 120));
-	AddAppleToWorld(Vector3(-220, 22.5, 140));
-	AddAppleToWorld(Vector3(-220, 22.5, 120));
 	//Obstacles
-	AddCubeToWorld(Vector3(0, 20, 0), Vector3(3, 3, 3), 0.14f);
 	obstacles.push_back(AddCubeToWorld(Vector3(110, 1.5, -12.5), Vector3(4.7, 3, 37.2), 0.0f));
 	obstacles.push_back(AddCubeToWorld(Vector3(85.3, 1.5, -45), Vector3(20, 3, 4.85), 0.0f));
 	obstacles.push_back(AddCubeToWorld(Vector3(-110, 1.5, 12.5), Vector3(4.7, 3, 37.2), 0.0f));
 	obstacles.push_back(AddCubeToWorld(Vector3(-85.3, 1.5, 45), Vector3(20, 3, 4.85), 0.0f));
+}
+
+void NetworkedGame::GenerateNetworkObjects()
+{
+	//Spawn players
+	SpawnPlayer(0, Vector3(212.5, 4, 212.5));
+	SpawnPlayer(1, Vector3(-212.5, 4, -212.5));
+	for (int i = 0; i < islands.size(); i++)
+	{
+		islands[i]->SetOwner(serverPlayers.at(i));
+	}
+	//Apples
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(0, 30, 0)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(-20, 30, -20)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(-20, 30, 20)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(20, 30, -20)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(20, 30, 20)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(230, 22.5, -130)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(240, 22.5, -140)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(240, 22.5, -120)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(220, 22.5, -140)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(220, 22.5, -120)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(-230, 22.5, 130)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(-240, 22.5, 140)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(-240, 22.5, 120)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(-220, 22.5, 140)));
+	networkObjects.push_back((NetworkObject*)AddAppleToWorld(Vector3(-220, 22.5, 120)));
+	//Obstacles
+	movables.push_back(AddCubeToWorld(Vector3(0, 20, 0), Vector3(3, 3, 3), 0.14f));
 	movables.push_back(AddCubeToWorld(Vector3(120, 1, 120), Vector3(2, 2, 2), 0.5f));
 	movables.push_back(AddCubeToWorld(Vector3(120, 1, 125), Vector3(2, 2, 2), 0.5f));
 	movables.push_back(AddCubeToWorld(Vector3(120, 1, 130), Vector3(2, 2, 2), 0.5f));
@@ -177,14 +201,102 @@ void NetworkedGame::StartLevel()
 	movables.push_back(AddCubeToWorld(Vector3(-120, 9, -135), Vector3(2, 2, 2), 0.5f));
 	movables.push_back(AddCubeToWorld(Vector3(120, 2, 190), Vector3(2, 2, 2), 0.5f));
 	movables.push_back(AddCubeToWorld(Vector3(-120, 2, -190), Vector3(2, 2, 2), 0.5f));
+	for (GameObject*& object : movables)
+	{
+		networkObjects.push_back((NetworkObject*)object);
+	}
 	//Enemies
-	AddParkKeeperToWorld(Vector3(-150, 10, -12.5));
-	AddParkKeeperToWorld(Vector3(150, 10, 12.5));
+	networkObjects.push_back((NetworkObject*)AddParkKeeperToWorld(Vector3(-150, 10, -12.5)));
+	networkObjects.push_back((NetworkObject*)AddParkKeeperToWorld(Vector3(150, 10, 12.5)));
 	//Other collectibles
-	AddSphereToWorld(Vector3(135, 2, 95), 1, 1);
-	AddSphereToWorld(Vector3(-135, 2, -95), 1, 1);
-	AddSphereToWorld(Vector3(-230, 42, 130), 1, 1);
-	AddSphereToWorld(Vector3(230, 42, -130), 1, 1);
+	networkObjects.push_back((NetworkObject*)AddSphereToWorld(Vector3(135, 2, 95), 1, 1));
+	networkObjects.push_back((NetworkObject*)AddSphereToWorld(Vector3(-135, 2, -95), 1, 1));
+	networkObjects.push_back((NetworkObject*)AddSphereToWorld(Vector3(-230, 42, 130), 1, 1));
+	networkObjects.push_back((NetworkObject*)AddSphereToWorld(Vector3(230, 42, -130), 1, 1));
+}
+
+void NetworkedGame::ReceivePacket(int type, GamePacket* payload, int source)
+{
+	switch (source)
+	{
+	case 0: //Server
+	{
+		switch (type)
+		{
+			//TODO: manage packets
+		}
+		break;
+	}
+	case 1: //Client
+	{
+		switch (type)
+		{
+			//TODO:manage packets
+		}
+		break;
+	}
+	}
+}
+
+void NetworkedGame::OnPlayerCollision(NetworkPlayer* a, NetworkPlayer* b)
+{
+	//TODO: something more interesting than nothing
+}
+
+void NetworkedGame::UpdateAsServer(float dt)
+{
+	UpdateGame(dt);
+
+	localPlayer->UpdatePositions();
+	localPlayer->ManageAbilities(dt);
+
+	CameraMovement();
+
+	UpdateKeys(dt);
+
+	MovePlayerCharacter(dt);
+
+	world->UpdateWorld(dt);
+	renderer->Update(dt);
+	physics->Update(dt);
+
+	renderer->Render();
+
+	//Display AI pathfinding grid
+	if (toggleGrid)
+	{
+		DisplayGrid();
+	}
+
+	DrawDisplay(dt);
+}
+
+void NetworkedGame::UpdateAsClient(float dt)
+{
+	UpdateGame(dt);
+
+	localPlayer->UpdatePositions();
+	localPlayer->ManageAbilities(dt);
+
+	CameraMovement();
+
+	UpdateKeys(dt);
+
+	MovePlayerCharacter(dt);
+
+	world->UpdateWorld(dt);
+	renderer->Update(dt);
+	physics->Update(dt);
+
+	renderer->Render();
+
+	//Display AI pathfinding grid
+	if (toggleGrid)
+	{
+		DisplayGrid();
+	}
+
+	DrawDisplay(dt);
 }
 
 void NetworkedGame::MoveEnemies(float dt)

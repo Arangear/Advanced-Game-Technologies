@@ -28,7 +28,7 @@ void GooseObject::ManageAbilities(const float dt)
 {
 	if (sprint <= 0.0)
 	{
-		speedMultiplier = 2;
+		speedMultiplier = 1;
 	}
 	if (sprint > 0)
 	{

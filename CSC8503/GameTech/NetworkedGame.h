@@ -17,9 +17,11 @@ namespace NCL {
 
 			void UpdateGame(float dt) override;
 
-			void SpawnPlayer(int id);
+			void SpawnPlayer(int id, const Vector3& position);
 
 			void StartLevel();
+
+			void GenerateNetworkObjects();
 
 			void ReceivePacket(int type, GamePacket* payload, int source) override;
 
@@ -39,6 +41,7 @@ namespace NCL {
 			int packetsToSnapshot;
 
 			std::vector<NetworkObject*> networkObjects;
+			std::vector<GooselandObject*> islands;
 
 			std::map<int, GooseObject*> serverPlayers;
 			GooseObject* localPlayer;
