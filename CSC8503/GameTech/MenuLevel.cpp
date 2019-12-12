@@ -31,7 +31,7 @@ void MenuLevel::DrawMenu()
 {
 	for (int i = 0; i < buttons.size(); i++)
 	{
-		renderer->DrawString(buttons[i], Vector2(10, 30 - 20 * i), i == selected ? Vector4(0.3, 0.3, 0, 1) : Vector4(0, 0, 0, 1));
+		renderer->DrawString(buttons[i], Vector2(10, (10 + 20 * buttons.size()) - 20 * i), i == selected ? Vector4(0.3, 0.3, 0, 1) : Vector4(0, 0, 0, 1));
 	}
 }
 
