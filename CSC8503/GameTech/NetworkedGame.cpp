@@ -69,25 +69,28 @@ void NetworkedGame::UpdateGame(float dt)
 	physics->Update(dt);
 }
 
-void NetworkedGame::SpawnPlayer()
+void NetworkedGame::SpawnPlayer(int id)
 {
 	//Spawn player and attach him to his island and controller
+	GooseObject* player = new GooseObject();
+
 }
 
 void NetworkedGame::StartLevel()
 {
 	world->ClearAndErase();
 	physics->Clear();
-	playerCharacter->GetSprint() = 0.0f;
-	playerCharacter->GetSprintCD() = 0.0f;
-	playerCharacter->GetQuackAttackCD() = 0.0f;
-	playerCharacter->GetQuackID() = 0.0f;
-	playerCharacter->GetSpeedMultiplier() = 0.0f;
 	forceMagnitude = 300.0f;
 	timer = 180.0f;
 	pickables.clear();
 	enemies.clear();
 	obstacles.clear();
+
+	//Spawn players
+	for (int i = 0; i < 2; i++)
+	{
+		SpawnPlayer(i);
+	}
 
 	//Setup
 	Vector3 floorPosition(0, -10, 0);

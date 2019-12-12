@@ -17,7 +17,7 @@ namespace NCL {
 
 			void UpdateGame(float dt) override;
 
-			void SpawnPlayer();
+			void SpawnPlayer(int id);
 
 			void StartLevel();
 
