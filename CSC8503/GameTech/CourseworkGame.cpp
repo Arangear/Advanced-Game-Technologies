@@ -7,6 +7,7 @@
 #include "../../CSC8503/CSC8503Common/PickableObject.h"
 
 #include "../CSC8503Common/PositionConstraint.h"
+#include "../CSC8503Common/HingeConstraint.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -199,6 +200,8 @@ void CourseworkGame::MovePlayerCharacter(float dt)
 		if (quackAttackCD <= 0)
 		{
 			quackAttackCD = 5.0f;
+			quackID++;
+			quackID = quackID >= 6 ? 0 : quackID;
 			QuackAttack();
 		}
 	}
@@ -258,6 +261,7 @@ void CourseworkGame::InitWorld()
 	//Islands
 	AddIslandToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
 	AddIslandToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
+	AddGateToWorld(floorPosition + floorSize * 0.85f + Vector3(-12, 2, -12), Vector3(0, 0, 0));
 	//Terrain
 	AddFloorToWorld(Vector3(0, -1, 0), Vector3(250, 1.5, 150), terrainColour, CollisionResolution::Impulse);
 	obstacles.push_back(AddFloorToWorld(Vector3(200.15, 2.5, -100.15), Vector3(49.85, 2.5, 49.85), terrainColour, CollisionResolution::Impulse));
@@ -269,8 +273,8 @@ void CourseworkGame::InitWorld()
 	AddFloorToWorld(Vector3(-220, 12.5, 120), Vector3(30, 2.5, 30), terrainColour, CollisionResolution::Impulse);
 	AddFloorToWorld(Vector3(-230, 17.5, 130), Vector3(20, 2.5, 20), terrainColour, CollisionResolution::Impulse);
 	//Ramps
-	AddRampToWorld(Vector3(-230, 40, 130), Vector3(10, 1, 10), Vector3(-20, 0, -20));
-	AddRampToWorld(Vector3(230, 40, -130), Vector3(10, 1, 10), Vector3(20, 0, 20));
+	AddRampToWorld(Vector3(-230, 40, 130), Vector3(10, 1, 10), Vector3(-20, 0, -20), 0);
+	AddRampToWorld(Vector3(230, 40, -130), Vector3(10, 1, 10), Vector3(20, 0, 20), 0);
 	//Trampoline
 	AddTrampolineToWorld(Vector3(0, 2.5, 0));
 	//Apples
@@ -335,7 +339,7 @@ void CourseworkGame::QuackAttack()
 {
 	for (GameObject*& object : movables)
 	{
-		Vector3 direction = playerCharacter->GetConstTransform().GetWorldPosition() - object->GetConstTransform().GetWorldPosition();
+		Vector3 direction = object->GetConstTransform().GetWorldPosition() - playerCharacter->GetConstTransform().GetWorldPosition();
 		if (direction.Length() < quackRange)
 		{
 			direction.Normalise();
@@ -352,7 +356,7 @@ void CourseworkGame::QuackAttack()
 	for (EnemyObject*& enemy : enemies)
 	{
 		GameObject* object = (GameObject*&)enemy;
-		Vector3 direction = playerCharacter->GetConstTransform().GetWorldPosition() - object->GetConstTransform().GetWorldPosition();
+		Vector3 direction = object->GetConstTransform().GetWorldPosition() - playerCharacter->GetConstTransform().GetWorldPosition();
 		if (direction.Length() < quackRange)
 		{
 			direction.Normalise();
@@ -361,7 +365,7 @@ void CourseworkGame::QuackAttack()
 			RayCollision collision;
 			if (world->Raycast(*ray, collision, true))
 			{
-				object->GetPhysicsObject()->AddForceAtPosition(direction * quackForce, collision.collidedAt);
+				object->GetPhysicsObject()->AddForceAtPosition(direction * 3 * quackForce, collision.collidedAt);
 			}
 			delete ray;
 		}
@@ -421,7 +425,7 @@ GameObject* CourseworkGame::AddFloorToWorld(const Vector3& position, const Vecto
 	return floor;
 }
 
-GameObject* CourseworkGame::AddRampToWorld(const Vector3& position, const Vector3& scale, const Vector3& rotation)
+GameObject* CourseworkGame::AddRampToWorld(const Vector3& position, const Vector3& scale, const Vector3& rotation, const float inverseMass)
 {
 	GameObject* ramp = new GameObject();
 
@@ -438,7 +442,7 @@ GameObject* CourseworkGame::AddRampToWorld(const Vector3& position, const Vector
 	ramp->GetPhysicsObject()->SetGravityAffinity(false);
 	ramp->GetPhysicsObject()->SetCollisionResolution(CollisionResolution::Impulse);
 
-	ramp->GetPhysicsObject()->SetInverseMass(0);
+	ramp->GetPhysicsObject()->SetInverseMass(inverseMass);
 	ramp->GetPhysicsObject()->InitCubeInertia();
 
 	ramp->GetRenderObject()->SetColour(Vector4(1, 0.89, 0.77, 1));
@@ -663,7 +667,21 @@ GameObject* CourseworkGame::AddCharacterToWorld(const Vector3& position) {
 	return character;
 }
 
-GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position) {
+void CourseworkGame::AddGateToWorld(const Vector3& position, const Vector3& rotation)
+{
+	GameObject* fence1 = AddRampToWorld(position, Vector3(0.2, 2, 0.3), rotation, 0);
+	GameObject* gate = AddRampToWorld(position + Quaternion::EulerAnglesToQuaternion(rotation.x, rotation.y, rotation.z) * Vector3(12, 0, 0), Vector3(11.5, 1.8, 0.2), rotation, 0.5);
+	GameObject* fence2 = AddRampToWorld(position + Quaternion::EulerAnglesToQuaternion(rotation.x, rotation.y, rotation.z) * Vector3(24, 0, 0), Vector3(0.2, 2, 0.3), rotation, 0);
+
+	PositionConstraint* constraint = new PositionConstraint(fence1, gate, 12);
+	HingeConstraint* rot = new HingeConstraint(fence1, gate, Vector3(0, 1, 0), Quaternion::EulerAnglesToQuaternion(-rotation.x, -rotation.y, -rotation.z) * Vector3(-12, 0, 0));
+
+	world->AddConstraint(constraint);
+	world->AddConstraint(rot);
+}
+
+GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position)
+{
 	PickableObject* apple = new PickableObject(1);
 
 	SphereVolume* volume = new SphereVolume(0.7f);
@@ -728,6 +746,43 @@ void CourseworkGame::DrawDisplay(float dt)
 	if (sprint > 0.0f)
 	{
 		renderer->DrawString("Sprint over in: " + std::to_string(sprint), Vector2(10, 130));
+	}
+	//Fun purposes
+	if (quackAttackCD > 4.0f)
+	{
+		switch (quackID)
+		{
+		case 0:
+		{
+			renderer->DrawString("Quack!", Vector2(560, 230), Vector4(0, 0.88, 0.72, 1));
+			break;
+		}
+		case 1:
+		{
+			renderer->DrawString("QUAAARRGH!", Vector2(500, 230), Vector4(0, 0.88, 0.72, 1));
+			break;
+		}
+		case 2:
+		{
+			renderer->DrawString("Quack off!", Vector2(500, 230), Vector4(0, 0.88, 0.72, 1));
+			break;
+		}
+		case 3:
+		{
+			renderer->DrawString("Geese lives matter!", Vector2(380, 230), Vector4(0, 0.88, 0.72, 1));
+			break;
+		}
+		case 4:
+		{
+			renderer->DrawString("Brexit!", Vector2(540, 230), Vector4(0, 0.88, 0.72, 1));
+			break;
+		}
+		case 5:
+		{
+			renderer->DrawString("Quack at me mate!", Vector2(400, 230), Vector4(0, 0.88, 0.72, 1));
+			break;
+		}
+		}
 	}
 }
 

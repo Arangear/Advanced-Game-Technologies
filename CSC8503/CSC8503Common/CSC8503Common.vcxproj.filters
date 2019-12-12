@@ -141,6 +141,9 @@
     <ClInclude Include="MenuState.h">
       <Filter>AI</Filter>
     </ClInclude>
+    <ClInclude Include="HingeConstraint.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionDetection.cpp">
@@ -235,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="MenuState.cpp">
       <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="HingeConstraint.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

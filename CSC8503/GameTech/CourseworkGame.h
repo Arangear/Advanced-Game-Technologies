@@ -38,7 +38,8 @@ namespace NCL
 			GameObject* AddFloorToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution);
 			GameObject* AddIslandToWorld(const Vector3& position, const Vector3& scale, const Vector4& colour, const int collisionResolution);
 			GameObject* AddWallToWorld(const Vector3& position, const Vector3& scale);
-			GameObject* AddRampToWorld(const Vector3& position, const Vector3& scale, const Vector3& rotation);
+			GameObject* AddRampToWorld(const Vector3& position, const Vector3& scale, const Vector3& rotation, const float inverseMass);
+			void AddGateToWorld(const Vector3& position, const Vector3& rotation);
 			void AddTrampolineToWorld(const Vector3& position);
 
 			GameObject* AddSphereToWorld(const Vector3& position, float radius, float inverseMass = 10.0f);
@@ -49,7 +50,6 @@ namespace NCL
 			GameObject* AddCharacterToWorld(const Vector3& position);
 			GameObject* AddAppleToWorld(const Vector3& position);
 
-
 			GameTechRenderer*	renderer;
 			PhysicsSystem*		physics;
 			GameWorld*			world;
@@ -58,8 +58,9 @@ namespace NCL
 			float sprint = 0.0f;
 			float sprintCD = 0.0f;
 			float quackAttackCD = 0.0f;
-			float quackForce = -5000.0f;
+			float quackForce = 5000.0f;
 			float quackRange = 70.0f;
+			int quackID = 0;
 
 			std::set<PickableObject*> pickables;
 			std::vector<EnemyObject*> enemies;
