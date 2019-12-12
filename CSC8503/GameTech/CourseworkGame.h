@@ -13,7 +13,7 @@ namespace NCL
 		{
 		public:
 			CourseworkGame();
-			~CourseworkGame();
+			virtual ~CourseworkGame();
 
 			virtual void UpdateGame(float dt);
 			bool IsOver() { return gameFinished; }
@@ -55,12 +55,6 @@ namespace NCL
 			GameWorld*			world;
 
 			float		forceMagnitude;
-			float sprint = 0.0f;
-			float sprintCD = 0.0f;
-			float quackAttackCD = 0.0f;
-			float quackForce = 5000.0f;
-			float quackRange = 70.0f;
-			int quackID = 0;
 
 			std::set<PickableObject*> pickables;
 			std::vector<EnemyObject*> enemies;
@@ -71,7 +65,6 @@ namespace NCL
 			bool gameFinished = false;
 			bool toggleGrid = false;
 
-			void ManageAbilities(float dt);
 			void DrawDisplay(float dt);
 
 			OGLMesh*	cubeMesh	= nullptr;

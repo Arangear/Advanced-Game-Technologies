@@ -10,7 +10,7 @@ namespace NCL {
 		class NetworkedGame : public CourseworkGame, public PacketReceiver {
 		public:
 			NetworkedGame();
-			~NetworkedGame();
+			virtual ~NetworkedGame();
 
 			void StartAsServer();
 			void StartAsClient(char a, char b, char c, char d);
@@ -29,8 +29,6 @@ namespace NCL {
 			void UpdateAsServer(float dt);
 			void UpdateAsClient(float dt);
 
-			void BroadcastSnapshot(bool deltaFrame);
-			void UpdateMinimumState();
 			std::map<int, int> stateIDs;
 
 			GameServer* thisServer;
@@ -40,8 +38,8 @@ namespace NCL {
 
 			std::vector<NetworkObject*> networkObjects;
 
-			std::map<int, GameObject*> serverPlayers;
-			GameObject* localPlayer;
+			std::map<int, GooseObject*> serverPlayers;
+			GooseObject* localPlayer;
 		};
 	}
 }

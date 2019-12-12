@@ -36,6 +36,9 @@
     <ClCompile Include="NetworkedGame.cpp">
       <Filter>Levels</Filter>
     </ClCompile>
+    <ClCompile Include="CourseworkPacketReceiver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameTechRenderer.h">
@@ -52,6 +55,9 @@
     </ClInclude>
     <ClInclude Include="NetworkedGame.h">
       <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="CourseworkPacketReceiver.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
