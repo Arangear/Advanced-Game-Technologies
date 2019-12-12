@@ -52,6 +52,7 @@ namespace NCL {
 			void	SetConsolePosition(int x, int y)	override;
 			void	ShowConsole(bool state)				override;
 			void	SetFullScreen(bool state)			override;
+			void	SetWindowPosition(int x, int y)		override;
 
 			HWND		GetHandle()			const { return windowHandle; }
 			HINSTANCE	GetInstance()		const { return windowInstance; }
@@ -75,7 +76,7 @@ namespace NCL {
 			bool			lockMouse;
 			bool			showMouse;
 			bool			mouseLeftWindow;
-
+			bool			maximised;
 			Win32Mouse*		winMouse;
 			Win32Keyboard*  winKeyboard;
 		};

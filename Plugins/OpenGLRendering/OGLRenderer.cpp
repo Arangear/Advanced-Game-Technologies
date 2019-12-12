@@ -387,9 +387,11 @@ void OGLRenderer::InitWithWin32(Window& w) {
 #endif
 
 	//If we get this far, everything's going well!
-	initState = true;
+	initState = true; 
 
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+	w.SetRenderer(this);
 }
 
 void OGLRenderer::DestroyWithWin32() {

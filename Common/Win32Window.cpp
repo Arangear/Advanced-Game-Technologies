@@ -92,7 +92,8 @@ Win32Window::Win32Window(const std::string& title, int sizeX, int sizeY, bool fu
 
 	windowTitle = title;
 
-	init = true;
+	init		= true;
+	maximised	= false;
 }
 
 Win32Window::~Win32Window(void)	{
@@ -201,6 +202,9 @@ void Win32Window::CheckMessages(MSG &msg)	{
 
 LRESULT CALLBACK Win32Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)	{
 	Win32Window* thisWindow = (Win32Window*)window;
+
+	bool applyResize = false;
+
     switch(message)	 {
         case(WM_DESTROY):	{
 			thisWindow->ShowOSPointer(true);
@@ -267,19 +271,34 @@ LRESULT CALLBACK Win32Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam,
 		case(WM_SIZE): {
 			float newX = (float)LOWORD(lParam);
 			float newY = (float)HIWORD(lParam);
-
 			if (newX > 0 && newY > 0 && (newX != thisWindow->size.x || newY != thisWindow->size.y)) {
 				thisWindow->size.x = (float)LOWORD(lParam);
 				thisWindow->size.y = (float)HIWORD(lParam);
-
-				thisWindow->ResizeRenderer();
-				if (thisWindow->init) {
-					thisWindow->winMouse->SetAbsolutePositionBounds(thisWindow->size);
-					thisWindow->LockMouseToWindow(thisWindow->lockMouse);
-				}
+			}
+			if (wParam == SIZE_MAXIMIZED) {
+				thisWindow->maximised = true;
+				applyResize = true;
+			}
+			else if (wParam == SIZE_RESTORED && thisWindow->maximised) {
+				thisWindow->maximised = false;
+				applyResize = true;
 			}
 		}break;
+		case(WM_ENTERSIZEMOVE): {
+		}break;
+		case(WM_EXITSIZEMOVE): {
+			applyResize = true;
+		}break;
     }
+
+	if (applyResize) {
+		thisWindow->ResizeRenderer();
+		if (thisWindow->init) {
+			thisWindow->winMouse->SetAbsolutePositionBounds(thisWindow->size);
+			thisWindow->LockMouseToWindow(thisWindow->lockMouse);
+		}
+	}
+
     return DefWindowProc (hWnd, message, wParam, lParam);
 }
 
@@ -316,6 +335,12 @@ void	Win32Window::SetConsolePosition(int x, int y)	{
 	HWND consoleWindow = GetConsoleWindow();
 
 	SetWindowPos(consoleWindow, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+	SetActiveWindow(windowHandle);
+}
+
+void	Win32Window::SetWindowPosition(int x, int y) {
+	SetWindowPos(windowHandle, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
 	SetActiveWindow(windowHandle);
 }
