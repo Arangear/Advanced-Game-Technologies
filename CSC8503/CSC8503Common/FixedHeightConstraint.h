@@ -9,17 +9,18 @@ namespace NCL
 	{
 		class GameObject;
 
-		class HingeConstraint : public Constraint
+		class FixedHeightConstraint : public Constraint
 		{
 		public:
-			HingeConstraint(GameObject* a, GameObject* b);
-			~HingeConstraint();
+			FixedHeightConstraint(GameObject* object, const float heightValue);
+			~FixedHeightConstraint();
 
 			void UpdateConstraint(float dt) override;
 
 		protected:
-			GameObject* objectA;
-			GameObject* objectB;
+			GameObject* object;
+
+			float height;
 		};
 	}
 }

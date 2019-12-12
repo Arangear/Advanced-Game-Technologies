@@ -1,18 +1,15 @@
-#include "PositionConstraint.h"
 #include "../../Common/Vector3.h"
 #include "GameObject.h"
-#include "Debug.h"
 #include "HingeConstraint.h"
+#include "../../Common/Maths.h"
 
 using namespace NCL;
 using namespace CSC8503;
 
-HingeConstraint::HingeConstraint(GameObject* a, GameObject* b, const Vector3& axis, const Vector3& _direction)
+HingeConstraint::HingeConstraint(GameObject* a, GameObject* b)
 {
 	objectA = a;
 	objectB = b;
-	constraintAxis = axis;
-	direction = _direction;
 }
 
 HingeConstraint::~HingeConstraint()
@@ -20,41 +17,13 @@ HingeConstraint::~HingeConstraint()
 
 }
 
-//a simple constraint that stops objects from being more than <distance> away
-//from each other...this would be all we need to simulate a rope, or a ragdoll
 void HingeConstraint::UpdateConstraint(float dt)
 {
-	/*Vector3 relativePos = objectA->GetConstTransform().GetWorldPosition() - objectB->GetConstTransform().GetWorldPosition();
+	Vector3 relativePos = objectA->GetConstTransform().GetWorldPosition() - objectB->GetConstTransform().GetWorldPosition();
+	relativePos.y = 0;
+	Vector3 dir = relativePos.Normalised();
 
-	float currentDistance = relativePos.Length();
-
-	float offset = distance - currentDistance;
-
-	if (abs(offset) > 0.0f)
-	{
-		Vector3 offsetDir = relativePos.Normalised();
-
-		PhysicsObject* physA = objectA->GetPhysicsObject();
-		PhysicsObject* physB = objectB->GetPhysicsObject();
-
-		Vector3 relativeVelocity = physA->GetLinearVelocity() - physB->GetLinearVelocity();
-
-		float constraintMass = physA->GetInverseMass() + physB->GetInverseMass();
-
-		if (constraintMass > 0.0f)
-		{
-			//how much of their relative force is affecting the constraint
-			float velocityDot = Vector3::Dot(relativeVelocity, offsetDir);
-			float biasFactor = 0.01f;
-			float bias = -(biasFactor / dt) * offset;
-
-			float lambda = -(velocityDot + bias) / constraintMass;
-
-			Vector3 aImpulse = offsetDir * lambda;
-			Vector3 bImpulse = -offsetDir * lambda;
-
-			physA->ApplyLinearImpulse(aImpulse); // multiplied by mass here
-			physB->ApplyLinearImpulse(bImpulse); // multiplied by mass here
-		}
-	}*/
+	//Manage rotation
+	objectA->GetTransform().SetLocalOrientation(Quaternion::EulerAnglesToQuaternion(0,-Maths::RadiansToDegrees(atan2f(dir.z, dir.x)), 0));
+	objectB->GetTransform().SetLocalOrientation(Quaternion::EulerAnglesToQuaternion(0, Maths::RadiansToDegrees(atan2f(-dir.z, dir.x)), 0));
 }

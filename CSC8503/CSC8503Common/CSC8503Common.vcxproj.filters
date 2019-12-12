@@ -144,6 +144,9 @@
     <ClInclude Include="HingeConstraint.h">
       <Filter>Physics</Filter>
     </ClInclude>
+    <ClInclude Include="FixedHeightConstraint.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionDetection.cpp">
@@ -240,6 +243,9 @@
       <Filter>AI</Filter>
     </ClCompile>
     <ClCompile Include="HingeConstraint.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="FixedHeightConstraint.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>

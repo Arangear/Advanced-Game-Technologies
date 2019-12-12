@@ -8,6 +8,7 @@
 
 #include "../CSC8503Common/PositionConstraint.h"
 #include "../CSC8503Common/HingeConstraint.h"
+#include "../CSC8503Common/FixedHeightConstraint.h"
 
 using namespace NCL;
 using namespace CSC8503;
@@ -261,7 +262,8 @@ void CourseworkGame::InitWorld()
 	//Islands
 	AddIslandToWorld(floorPosition + floorSize * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
 	AddIslandToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f, islandSize, islandColour, CollisionResolution::Impulse);
-	AddGateToWorld(floorPosition + floorSize * 0.85f + Vector3(-12, 2, -12), Vector3(0, 0, 0));
+	AddGateToWorld(floorPosition + floorSize * 0.85f + Vector3(-12, 4, -12), Vector3(0, 0, 0));
+	AddGateToWorld(floorPosition - Vector3(floorSize.x, -floorSize.y, floorSize.z) * 0.85f + Vector3(12, 4, 12), Vector3(0, 180, 0));
 	//Terrain
 	AddFloorToWorld(Vector3(0, -1, 0), Vector3(250, 1.5, 150), terrainColour, CollisionResolution::Impulse);
 	obstacles.push_back(AddFloorToWorld(Vector3(200.15, 2.5, -100.15), Vector3(49.85, 2.5, 49.85), terrainColour, CollisionResolution::Impulse));
@@ -674,10 +676,12 @@ void CourseworkGame::AddGateToWorld(const Vector3& position, const Vector3& rota
 	GameObject* fence2 = AddRampToWorld(position + Quaternion::EulerAnglesToQuaternion(rotation.x, rotation.y, rotation.z) * Vector3(24, 0, 0), Vector3(0.2, 2, 0.3), rotation, 0);
 
 	PositionConstraint* constraint = new PositionConstraint(fence1, gate, 12);
-	HingeConstraint* rot = new HingeConstraint(fence1, gate, Vector3(0, 1, 0), Quaternion::EulerAnglesToQuaternion(-rotation.x, -rotation.y, -rotation.z) * Vector3(-12, 0, 0));
+	HingeConstraint* rot = new HingeConstraint(fence1, gate);
+	FixedHeightConstraint* height = new FixedHeightConstraint(gate, gate->GetTransform().GetWorldPosition().y);
 
 	world->AddConstraint(constraint);
 	world->AddConstraint(rot);
+	world->AddConstraint(height);
 }
 
 GameObject* CourseworkGame::AddAppleToWorld(const Vector3& position)
