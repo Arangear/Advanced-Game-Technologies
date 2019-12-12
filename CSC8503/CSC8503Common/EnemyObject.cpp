@@ -25,14 +25,17 @@ void EnemyObject::initStateMachine()
 				object->nodes.push_back(pos);
 			}
 
-			object->optimiseNodes();
-			object->drawPath();
-
-			if (object->nodes.size() >= 2) //Sanity check
+			if (object->grid->FindPath(object->GetConstTransform().GetWorldPosition(), object->origin, path))
 			{
-				Vector3 direction = object->nodes[1] - object->nodes[0];
-				direction.Normalise();
-				object->GetPhysicsObject()->AddForce(direction * object->speed * object->currentDT);
+				object->optimiseNodes();
+				object->drawPath();
+
+				if (object->nodes.size() >= 2) //Sanity check
+				{
+					Vector3 direction = object->nodes[1] - object->nodes[0];
+					direction.Normalise();
+					object->GetPhysicsObject()->AddForce(direction * object->speed * object->currentDT);
+				}
 			}
 		}
 	};
@@ -43,21 +46,23 @@ void EnemyObject::initStateMachine()
 		object->nodes.clear();
 		object->targetPosition = object->origin;
 		object->targetPosition.y = 0;
-		object->grid->FindPath(object->GetConstTransform().GetWorldPosition(), object->origin, path);
-		Vector3 pos;
-		while (path.PopWaypoint(pos))
+		if (object->grid->FindPath(object->GetConstTransform().GetWorldPosition(), object->origin, path))
 		{
-			object->nodes.push_back(pos);
-		}
+			Vector3 pos;
+			while (path.PopWaypoint(pos))
+			{
+				object->nodes.push_back(pos);
+			}
 
-		object->optimiseNodes();
-		object->drawPath();
+			object->optimiseNodes();
+			object->drawPath();
 
-		if (object->nodes.size() >= 2) //Sanity check
-		{
-			Vector3 direction = object->nodes[1] - object->nodes[0];
-			direction.Normalise();
-			object->GetPhysicsObject()->AddForce(direction * object->speed * object->currentDT);
+			if (object->nodes.size() >= 2) //Sanity check
+			{
+				Vector3 direction = object->nodes[1] - object->nodes[0];
+				direction.Normalise();
+				object->GetPhysicsObject()->AddForce(direction * object->speed * object->currentDT);
+			}
 		}
 	};
 
