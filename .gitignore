@@ -41,3 +41,7 @@
 *.log
 *.pdb
 *.ilk
+*.txt
+*.enc
+*.iobj
+*.ipdb
